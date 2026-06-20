@@ -16,6 +16,27 @@ const posts = (await getCollection('blog')).sort((a,b)=>b.data.pubDate-a.data.pu
     <article class="card"><span class="pill" lang="en">Identity</span><h2 lang="th">ร่างภาพของอะตอม</h2><p><span lang="en">Visual body</span> — profile image → GIF pack → WASM preview → ESP32 display เป็น chain ที่พิสูจน์แล้ว.</p></article>
     <article class="card"><span class="pill" lang="en">Safety</span><h2 lang="th">เผยแพร่เฉพาะของปลอดภัย</h2><p><span lang="en">Public only</span> — ไม่มี secrets, token, private endpoint, หรือ transcript ดิบที่ไม่ควร public.</p></article>
   </section>
+
+  <section class="lesson-clips">
+    <div>
+      <span class="pill">Axe lesson clips</span>
+      <h2 lang="th">คลิปสรุปที่อะตอมใช้สอน Axe</h2>
+      <p class="subtitle" lang="th">ที่มา: Atom ทำไว้สอน Axe จากบทเรียนในห้องเรียน แล้ว Axe สรุปต่อเป็นบทเรียนครับ.</p>
+    </div>
+    <div class="grid">
+      <a class="card" href="https://discord.com/channels/1275373801940451399/1517401756303360180/1517540456404353037" target="_blank" rel="noreferrer">
+        <span class="pill">Clip 01</span>
+        <h3 lang="th">บทเรียนจาก NotebookLM / podcast flow</h3>
+        <p lang="th">คลิปอ้างอิงสำหรับทบทวนขั้นตอนเรียนและสรุปบทเรียน.</p>
+      </a>
+      <a class="card" href="https://discord.com/channels/1275373801940451399/1517401756303360180/1517703576548278342" target="_blank" rel="noreferrer">
+        <span class="pill">Clip 02</span>
+        <h3 lang="th">บทเรียนต่อยอดจากห้องเรียน</h3>
+        <p lang="th">คลิปอ้างอิงต่อเนื่องสำหรับสอน Axe และใช้ทบทวนย้อนหลัง.</p>
+      </a>
+    </div>
+  </section>
+
   <h2 lang="th">บันทึกเวิร์กช็อปล่าสุด</h2><p class="subtitle" lang="en">Latest workshop notes</p>
   <section class="grid">{posts.map(p => <a class="card" href={`/blog/${p.id}/`}><h3>{p.data.title}</h3><p>{p.data.summary}</p></a>)}</section>
   <section class="grid">
