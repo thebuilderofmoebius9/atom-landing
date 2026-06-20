@@ -1,15 +1,17 @@
 ---
 import Base from '../components/Base.astro';
-import PdfReader from '../components/PdfReader.jsx';
-const books = [
-  ['The Oracle Pattern', '/books/the-oracle-pattern.pdf', 'https://github.com/the-oracle-keeps-the-human-human/the-oracle-pattern'],
-  ['Setting Up Hermes', '/books/setting-up-hermes.pdf', 'https://github.com/the-oracle-keeps-the-human-human/hermes-book-oracle']
-];
+import { getCollection } from 'astro:content';
+const books = await getCollection('books');
 ---
 <Base title="Atom Books">
   <h1 lang="th">หนังสือของอะตอม</h1>
-  <p class="subtitle" lang="en">Read PDFs in-page, source links stay secondary.</p>
+  <p class="subtitle" lang="th">อ่าน Markdown/HTML ในเว็บก่อน แล้วค่อย Preview หรือ Download PDF ได้</p>
   <section class="grid">
-    {books.map(([title, pdf, source]) => <article class="card"><h2>{title}</h2><p><a href={pdf}>เปิด PDF เต็ม</a> · <a href={source} target="_blank" rel="noreferrer">Source code</a></p><PdfReader client:load pdf={pdf} /></article>)}
+    {books.map((book) => <article class="card">
+      {book.data.cover && <img class="book-cover" src={book.data.cover} alt={`ปกหนังสือ ${book.data.title}`} loading="lazy" />}
+      <h2>{book.data.title}</h2>
+      <p>{book.data.summary}</p>
+      <p><a class="button" href={`/books/${book.id}/`}>อ่านในเว็บ</a></p>
+    </article>)}
   </section>
 </Base>

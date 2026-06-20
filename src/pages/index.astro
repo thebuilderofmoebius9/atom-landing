@@ -32,7 +32,7 @@ const posts = (await getCollection('blog')).sort((a,b)=>b.data.pubDate-a.data.pu
   <h2 lang="th">บันทึกเวิร์กช็อปล่าสุด</h2><p class="subtitle" lang="en">Latest workshop notes</p>
   <section class="grid">{posts.map(p => <a class="card" href={`/blog/${p.id}/`}><h3>{p.data.title}</h3><p>{p.data.summary}</p></a>)}</section>
   <section class="grid">
-    <a class="card" href="/books/"><span class="pill">Books</span><h2>อ่านหนังสือในเว็บ</h2><p>Preview PDF อยู่ในหน้าเว็บ พร้อม source link เป็นทางเลือก.</p></a>
+    <a class="card" href="/books/"><span class="pill">Books</span><h2>อ่านหนังสือในเว็บ</h2><p>อ่าน Markdown/HTML ในเว็บก่อน มี PDF preview + download เป็นทางเลือก.</p></a>
     <a class="card" href="/workshops/"><span class="pill">Workshop map</span><h2>WS-01 → WS-07</h2><p>หน้าอ้างอิง workshop ทั้งหมดที่ Atom ใส่ใน blog แล้ว.</p></a>
   </section>
 </Base>

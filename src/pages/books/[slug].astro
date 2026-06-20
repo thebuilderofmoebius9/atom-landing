@@ -1,0 +1,29 @@
+---
+import Base from '../../components/Base.astro';
+import PdfReader from '../../components/PdfReader.jsx';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const books = await getCollection('books');
+  return books.map((book) => ({ params: { slug: book.id }, props: { book } }));
+}
+
+const { book } = Astro.props;
+const { Content } = await render(book);
+---
+<Base title={`${book.data.title} — Atom Books`}>
+  <article class="prose">
+    <p><a href="/books/">← กลับหน้าหนังสือ</a></p>
+    <h1>{book.data.title}</h1>
+    <p class="subtitle">{book.data.summary}</p>
+    {book.data.cover && <img class="book-cover" src={book.data.cover} alt={`ปกหนังสือ ${book.data.title}`} loading="lazy" />}
+    <Content />
+  </article>
+
+  <section class="card" aria-labelledby="pdf-preview">
+    <h2 id="pdf-preview">Preview PDF</h2>
+    <p>ใช้ preview เพื่อตัดสินใจก่อน download; เนื้อหาหลักด้านบนเป็น HTML สำหรับอ่านและค้นเจอในเว็บ</p>
+    <PdfReader client:load pdf={book.data.pdf} />
+    <p><a class="button" href={book.data.pdf} download>Download PDF</a> · <a href={book.data.source} target="_blank" rel="noreferrer">Source code / ออกนอกเว็บ</a></p>
+  </section>
+</Base>
