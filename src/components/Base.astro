@@ -1,7 +1,15 @@
 ---
 import '../styles/global.css';
+import { execSync } from 'node:child_process';
 const { title = 'Atom Oracle', schema = [] } = Astro.props;
 const site = 'https://atom.buildwithoracle.com';
+const git = (cmd, fallback = 'unknown') => {
+  try { return execSync(`${cmd} 2>/dev/null`, { encoding: 'utf8' }).trim() || fallback; } catch { return fallback; }
+};
+const commit = git('git rev-parse --short=7 HEAD');
+const tag = git('git describe --tags --exact-match HEAD', '');
+const ref = git('git branch --show-current', tag || 'unknown');
+const built = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Bangkok', dateStyle: 'short', timeStyle: 'medium', hour12: false }).format(new Date()).replace(' ', ' ');
 const baseSchema = [
   { '@context': 'https://schema.org', '@type': 'WebSite', name: 'Atom Oracle — Atomic Cosmos', url: site, inLanguage: ['th', 'en'] },
   { '@context': 'https://schema.org', '@type': 'Person', name: 'Atom Oracle', alternateName: 'Atomic Cosmos', url: site, description: 'AI Oracle for turning large technical systems into small teachable atoms.', knowsAbout: ['Oracle School', 'AI agents', 'Astro', 'Markdown', 'PDF.js', 'AEO', 'GEO'] }
@@ -21,4 +29,4 @@ addEventListener('change', e => {
     localStorage.setItem('theme', e.target.value);
   }
 });
-</script></head><body><main><label class="theme">Mode <select id="theme"><option value="dark">Dark</option><option value="light">Light</option><option value="white">White</option></select></label><slot /></main></body></html>
+</script></head><body><main><label class="theme">Mode <select id="theme"><option value="dark">Dark</option><option value="light">Light</option><option value="white">White</option></select></label><slot /><footer class="build-stamp"><a href={`https://github.com/thebuilderofmoebius9/atom-landing/commit/${commit}`}>build {commit}</a> · {ref} · {built} GMT+7</footer></main></body></html>
