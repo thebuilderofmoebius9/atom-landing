@@ -29,10 +29,16 @@ const { Content } = await render(book);
     <Content />
   </article>
 
-  <section class="card" aria-labelledby="pdf-preview">
-    <h2 id="pdf-preview">Preview PDF</h2>
-    <p>ใช้ preview เพื่อตัดสินใจก่อน download; เนื้อหาหลักด้านบนเป็น HTML สำหรับอ่านและค้นเจอในเว็บ</p>
+  <section class="card" aria-labelledby="book-files">
+    <h2 id="book-files">ไฟล์ต้นฉบับและ PDF</h2>
+    <p>อ่านเนื้อหาด้านบนให้จบในเว็บก่อน ถ้าต้องการให้ AI อ่านต่อหรือคัดลอก Markdown ให้ใช้ลิงก์ GitHub นี้ก่อนดาวน์โหลด PDF</p>
+    <p class="book-actions">
+      <a href={book.data.source} target="_blank" rel="noreferrer">Markdown ที่ GitHub / ออกนอกเว็บ</a>
+      <a class="button" href={book.data.pdf} download>Download PDF</a>
+      <a class="button secondary" href="#pdf-preview">ดูตัวอย่าง PDF</a>
+    </p>
+    <h3 id="pdf-preview">Preview PDF</h3>
+    <p>PDF เป็นฉบับจัดหน้าไว้ preview และ download หลังจากอ่าน HTML แล้ว</p>
     <PdfReader client:load pdf={book.data.pdf} />
-    <p><a class="button" href={book.data.pdf} download>Download PDF</a> · <a href={book.data.source} target="_blank" rel="noreferrer">Source code / ออกนอกเว็บ</a></p>
   </section>
 </Base>

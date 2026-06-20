@@ -2,7 +2,7 @@
 title: "Setting Up Hermes"
 summary: "เรื่องเล่า 3 Oracle ปลุก Hermes บน m5 ให้ soul อยู่รอดแม้ engine เปลี่ยน"
 pdf: "/books/setting-up-hermes.pdf"
-source: "https://github.com/the-oracle-keeps-the-human-human/hermes-book-oracle"
+source: "https://github.com/the-oracle-keeps-the-human-human/hermes-book-oracle/blob/main/README.md"
 cover: "/book-covers/hermes-setting-up.png"
 ---
 

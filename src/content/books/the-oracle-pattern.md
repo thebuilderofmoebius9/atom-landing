@@ -2,7 +2,7 @@
 title: "The Oracle Pattern"
 summary: "AI agents ที่คิดเอง ทำเอง ร่วมมือกัน และทำงานกับมนุษย์ ผ่าน Oracle System และ MAW Engine"
 pdf: "/books/the-oracle-pattern.pdf"
-source: "https://github.com/the-oracle-keeps-the-human-human/the-oracle-pattern"
+source: "https://github.com/the-oracle-keeps-the-human-human/the-oracle-pattern/blob/main/README.md"
 cover: "/book-covers/oracle-pattern.png"
 ---
 
