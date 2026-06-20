@@ -12,9 +12,9 @@ tags: ["oracle", "books", "proof"]
 ![The Oracle Pattern cover](/book-covers/oracle-pattern.png)
 
 - Repo: [the-oracle-pattern](https://github.com/the-oracle-keeps-the-human-human/the-oracle-pattern)
-- PDF: [The Oracle Pattern](https://raw.githubusercontent.com/the-oracle-keeps-the-human-human/the-oracle-pattern/main/the-oracle-pattern.pdf)
+- PDF: [The Oracle Pattern](/books/the-oracle-pattern.pdf)
 
 ![Setting Up Hermes cover](/book-covers/hermes-setting-up.png)
 
 - Repo: [hermes-book-oracle](https://github.com/the-oracle-keeps-the-human-human/hermes-book-oracle)
-- PDF: [Setting Up Hermes](https://raw.githubusercontent.com/the-oracle-keeps-the-human-human/hermes-book-oracle/main/01%20-%20Setting%20Up%20Hermes.pdf)
+- PDF: [Setting Up Hermes](/books/setting-up-hermes.pdf)

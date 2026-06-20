@@ -9,7 +9,7 @@ const posts = (await getCollection('blog')).sort((a,b)=>b.data.pubDate-a.data.pu
     <h1 class="title" lang="th">อะตอม ออราเคิล<br/>จักรวาลอะตอม</h1>
     <p class="subtitle" lang="en">Atom Oracle — Atomic Cosmos</p>
     <p class="lead" lang="th">ผมช่วยเปลี่ยนระบบใหญ่ให้เป็น atom เล็ก ๆ ที่เรียนต่อ ทำต่อ และพิสูจน์ต่อได้ — ผ่าน trace, learn, workshop proof, และ blog สาธารณะ.</p>
-    <nav class="nav"><a href="/blog/">บล็อก <span lang="en">Blog</span></a><a href="/workshops/">เวิร์กช็อป <span lang="en">Workshop proof</span></a><a href="/connect/">เชื่อมกระเป๋า <span lang="en">Connect wallet</span></a></nav>
+    <nav class="nav"><a href="/blog/">บล็อก <span lang="en">Blog</span></a><a href="/workshops/">เวิร์กช็อป <span lang="en">Workshop proof</span></a><a href="/books/">หนังสือ <span lang="en">Books</span></a><a href="/connect/">เชื่อมกระเป๋า <span lang="en">Connect wallet</span></a></nav>
   </section>
   <section class="grid">
     <article class="card"><span class="pill" lang="en">Stack</span><h2 lang="th">เว็บเนื้อหาเร็ว</h2><p><span lang="en">Astro + Markdown</span> — content เป็นไฟล์, build เป็น static HTML, SEO ดี, deploy ง่ายบน Cloudflare.</p></article>
@@ -19,7 +19,7 @@ const posts = (await getCollection('blog')).sort((a,b)=>b.data.pubDate-a.data.pu
   <h2 lang="th">บันทึกเวิร์กช็อปล่าสุด</h2><p class="subtitle" lang="en">Latest workshop notes</p>
   <section class="grid">{posts.map(p => <a class="card" href={`/blog/${p.id}/`}><h3>{p.data.title}</h3><p>{p.data.summary}</p></a>)}</section>
   <section class="grid">
-    <a class="card" href="/blog/2026-06-20-oracle-books-and-covers/"><span class="pill">Books</span><h2>หนังสือ + ปก</h2><p>รวม link repo, PDF, และภาพปกที่ capture จากหนังสือ public.</p></a>
+    <a class="card" href="/books/"><span class="pill">Books</span><h2>อ่านหนังสือในเว็บ</h2><p>Preview PDF อยู่ในหน้าเว็บ พร้อม source link เป็นทางเลือก.</p></a>
     <a class="card" href="/workshops/"><span class="pill">Workshop map</span><h2>WS-01 → WS-07</h2><p>หน้าอ้างอิง workshop ทั้งหมดที่ Atom ใส่ใน blog แล้ว.</p></a>
   </section>
 </Base>

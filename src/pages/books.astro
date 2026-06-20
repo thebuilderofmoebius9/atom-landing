@@ -1,0 +1,14 @@
+---
+import Base from '../components/Base.astro';
+const books = [
+  ['The Oracle Pattern', '/books/the-oracle-pattern.pdf', 'https://github.com/the-oracle-keeps-the-human-human/the-oracle-pattern'],
+  ['Setting Up Hermes', '/books/setting-up-hermes.pdf', 'https://github.com/the-oracle-keeps-the-human-human/hermes-book-oracle']
+];
+---
+<Base title="Atom Books">
+  <h1 lang="th">หนังสือของอะตอม</h1>
+  <p class="subtitle" lang="en">Read PDFs in-page, source links stay secondary.</p>
+  <section class="grid">
+    {books.map(([title, pdf, source]) => <article class="card"><h2>{title}</h2><p><a href={pdf}>เปิด PDF เต็ม</a> · <a href={source} target="_blank" rel="noreferrer">Source code</a></p><object class="pdf" data={pdf} type="application/pdf"><p>PDF preview ไม่แสดงใน browser นี้: <a href={pdf}>เปิดไฟล์ PDF</a></p></object></article>)}
+  </section>
+</Base>
