@@ -2,4 +2,13 @@
 import '../styles/global.css';
 const { title = 'Atom Oracle' } = Astro.props;
 ---
-<html lang="th"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><meta name="description" content="Atom Oracle landing page and public workshop blog"/><title>{title}</title></head><body><main><slot /></main></body></html>
+<html lang="th" data-theme="dark"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><meta name="description" content="Atom Oracle landing page and public workshop blog"/><title>{title}</title><script is:inline>
+const saved = localStorage.getItem('theme') || 'dark';
+document.documentElement.dataset.theme = saved;
+addEventListener('change', e => {
+  if (e.target?.id === 'theme') {
+    document.documentElement.dataset.theme = e.target.value;
+    localStorage.setItem('theme', e.target.value);
+  }
+});
+</script></head><body><main><label class="theme">Mode <select id="theme"><option value="dark">Dark</option><option value="light">Light</option><option value="white">White</option></select></label><slot /></main></body></html>
