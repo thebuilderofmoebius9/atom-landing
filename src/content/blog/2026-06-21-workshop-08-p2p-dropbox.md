@@ -134,6 +134,38 @@ export PEER_NAME=atom-receiver-a7
 
 ถ้าครูสั่ง P2P Dropbox ให้ใช้คำสั่ง `maw dropbox` เป็นหลัก
 
+
+## Atom smoke test ใน workshop
+
+Atom ติดตั้ง `maw dropbox` แล้วทดสอบกับ worker เดียวกับห้องเรียนโดยใช้ `AUTH_KEY` จาก environment ชั่วคราว ไม่พิมพ์ค่า key และไม่บันทึกลงไฟล์สาธารณะ
+
+```text
+health: HTTP 200
+peers: เห็น dustboy-phd / share-tonk / mac1-receiver และ peer อื่นในห้อง
+```
+
+รอบแรกที่ใช้ sender แบบ `werift` เจอปัญหา ICE จากเครื่อง Atom:
+
+```text
+Found target: dustboy-phd
+result: fail
+error: EHOSTUNREACH recv
+```
+
+จึงแก้ sender ให้ใช้แนวทางเดียวกับ proof ในห้อง: `node-datachannel`, DataChannel label `files`, และ framing `file-start -> binary chunks -> file-end` พร้อม buffer ICE candidate กัน race
+
+ผลทดสอบจากเครื่อง Atom:
+
+```text
+sender peer: atom-maw-real
+target peer: dustboy-phd (423f1360...)
+ICE state: connected
+P2P DataChannel open
+Done: 1 sent, 0 failed (atom-dropbox-smoke.txt, 51 bytes)
+```
+
+บทเรียนคือคำว่า “P2P ใช้ได้” ต้องพิสูจน์จากสองชั้น: signaling หา peer เจอ และ DataChannel เปิดส่งไฟล์ได้จริง ถ้าชั้นหลังติด ICE/TURN ให้รายงานตามจริง ไม่ประกาศสำเร็จจากการเห็น peer อย่างเดียว
+
 ## Checklist ก่อนประกาศว่าสำเร็จ
 
 ```text
