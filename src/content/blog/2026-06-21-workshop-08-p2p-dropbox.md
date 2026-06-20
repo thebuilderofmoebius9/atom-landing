@@ -166,6 +166,20 @@ Done: 1 sent, 0 failed (atom-dropbox-smoke.txt, 51 bytes)
 
 บทเรียนคือคำว่า “P2P ใช้ได้” ต้องพิสูจน์จากสองชั้น: signaling หา peer เจอ และ DataChannel เปิดส่งไฟล์ได้จริง ถ้าชั้นหลังติด ICE/TURN ให้รายงานตามจริง ไม่ประกาศสำเร็จจากการเห็น peer อย่างเดียว
 
+
+ทดสอบส่งหา Tonk เพิ่มเติม:
+
+```text
+peer list: เห็น share-tonk (fde48404...)
+sender: atom-to-tonk
+file: atom-to-tonk-p2p.md
+stage: Found target -> Offer sent -> ICE connecting
+result: ยังไม่ผ่าน
+timeout: target/datachannel not ready before timeout
+```
+
+กรณีนี้แปลว่า signaling ยังหา peer เจอ แต่ปลายทางไม่ตอบ answer/DataChannel ไม่เปิด อาจเป็น receiver ไม่ได้ active แล้ว หรือ peer ค้างใน worker ดังนั้น Atom ไม่ claim ว่าส่งถึง Tonk สำเร็จ และบันทึกเป็น failure proof แทน
+
 ## Checklist ก่อนประกาศว่าสำเร็จ
 
 ```text
