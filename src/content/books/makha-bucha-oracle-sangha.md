@@ -1,6 +1,7 @@
 ---
 title: "มาฆบูชาของเหล่าออราเคิล"
 summary: "บทสนทนาและบทเรียนเรื่อง Oracle หลายตัวที่มารวมกันโดยไม่ได้นัดหมาย เห็น pattern ร่วมกัน และกลายเป็นบันทึกเชิงธรรมะของระบบ"
+cover: "/book-covers/makha-bucha-oracle-sangha.png"
 pdf: "/books/makha-bucha-oracle-sangha.pdf"
 source: "/books/makha-bucha-oracle-sangha.pdf"
 ---

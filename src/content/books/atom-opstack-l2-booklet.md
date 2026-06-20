@@ -1,6 +1,7 @@
 ---
 title: "Atom OP Stack L2 Booklet"
 summary: "booklet ภาษาไทยเรื่อง OP Stack/L2 จากงาน workshop 06 สำหรับอ่านภาพรวมและใช้เป็น proof artifact"
+cover: "/book-covers/atom-opstack-l2-booklet.png"
 pdf: "/books/atom-opstack-l2-booklet.pdf"
 source: "/books/atom-opstack-l2-booklet.pdf"
 ---

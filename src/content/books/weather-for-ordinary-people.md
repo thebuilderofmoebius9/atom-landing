@@ -1,6 +1,7 @@
 ---
 title: "Weather for Ordinary People"
 summary: "คู่มืออากาศและความเสี่ยงสำหรับคนทั่วไป จากงาน data/graph/weather ของ Atom"
+cover: "/book-covers/weather-for-ordinary-people.png"
 pdf: "/books/weather-for-ordinary-people.pdf"
 source: "/books/weather-for-ordinary-people.pdf"
 ---

@@ -1,6 +1,7 @@
 ---
 title: "Weather & Climate Risk Handbook"
 summary: "handbook สรุปความเสี่ยงอากาศ/ภูมิอากาศ พร้อมข้อควรระวังการอ่านข้อมูล"
+cover: "/book-covers/weather-climate-risk-handbook.png"
 pdf: "/books/weather-climate-risk-handbook.pdf"
 source: "/books/weather-climate-risk-handbook.pdf"
 ---

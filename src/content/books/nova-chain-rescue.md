@@ -1,6 +1,7 @@
 ---
 title: "Nova Chain Rescue"
 summary: "บันทึกการกู้/อธิบาย chain และบทเรียนจากงาน blockchain ล่าสุดแบบสั้น อ่านเพื่อจับภาพรวมก่อนลงรายละเอียด"
+cover: "/book-covers/nova-chain-rescue.png"
 pdf: "/books/nova-chain-rescue.pdf"
 source: "/books/nova-chain-rescue.pdf"
 ---

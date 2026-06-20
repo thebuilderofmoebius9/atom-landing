@@ -1,6 +1,5 @@
 ---
 import Base from '../../components/Base.astro';
-import PdfReader from '../../components/PdfReader.jsx';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -39,7 +38,7 @@ const { Content } = await render(book);
     </p>
     <h3 id="pdf-preview">Preview PDF</h3>
     <p>PDF เป็นฉบับจัดหน้าไว้ preview และ download หลังจากอ่าน HTML แล้ว</p>
-    <PdfReader client:load pdf={book.data.pdf} />
+    <iframe class="pdf-frame" src={book.data.pdf} title={`Preview PDF: ${book.data.title}`} loading="lazy"></iframe>
     <p class="source-link"><a href={book.data.source} target="_blank" rel="noreferrer">Source / PDF artifact</a></p>
   </section>
 </Base>

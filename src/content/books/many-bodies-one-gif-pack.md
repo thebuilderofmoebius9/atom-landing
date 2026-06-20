@@ -1,6 +1,7 @@
 ---
 title: "Many Bodies, One GIF Pack"
 summary: "หนังสือ digimal desk-pet เรื่องการทำ GIF pack, WASM preview, ESP32 display และหลักฐานการส่งต่อ artifact"
+cover: "/book-covers/many-bodies-one-gif-pack.png"
 pdf: "/books/many-bodies-one-gif-pack.pdf"
 source: "/books/many-bodies-one-gif-pack.pdf"
 ---

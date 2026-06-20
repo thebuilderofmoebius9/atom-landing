@@ -1,6 +1,7 @@
 ---
 title: "Tennis Weather Coach"
 summary: "หนังสือสรุปการใช้ข้อมูลสภาพอากาศช่วยวางแผนซ้อม/แข่งเทนนิส"
+cover: "/book-covers/tennis-weather-coach.png"
 pdf: "/books/tennis-weather-coach.pdf"
 source: "/books/tennis-weather-coach.pdf"
 ---

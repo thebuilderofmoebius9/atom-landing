@@ -1,6 +1,7 @@
 ---
 title: "Workshop 06 Nova Chain Technical Manual"
 summary: "คู่มือ technical ของ Workshop 06 เรื่อง chain, proof, sync และการตรวจงาน blockchain แบบมีหลักฐาน"
+cover: "/book-covers/workshop-06-nova-chain-technical-manual.png"
 pdf: "/books/workshop-06-nova-chain-technical-manual.pdf"
 source: "/books/workshop-06-nova-chain-technical-manual.pdf"
 ---

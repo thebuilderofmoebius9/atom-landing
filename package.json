@@ -14,7 +14,6 @@
     "@tailwindcss/vite": "latest",
     "astro": "latest",
     "nanostores": "latest",
-    "pdfjs-dist": "^6.0.227",
     "react": "latest",
     "react-dom": "latest",
     "tailwindcss": "latest"

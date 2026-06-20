@@ -29,4 +29,4 @@ addEventListener('change', e => {
     localStorage.setItem('theme', e.target.value);
   }
 });
-</script></head><body><main><label class="theme">Mode <select id="theme"><option value="dark">Dark</option><option value="light">Light</option><option value="white">White</option></select></label><slot /><footer class="build-stamp"><a href={`https://github.com/thebuilderofmoebius9/atom-landing/commit/${commit}`}>build {commit}</a> · {ref} · {built} GMT+7</footer></main></body></html>
+</script></head><body><nav class="topbar" aria-label="Site shortcuts"><a class="toplink" href="/connect/">Connect wallet</a><div class="topright"><a class="home-icon" href="https://atom.buildwithoracle.com/" aria-label="กลับหน้าแรก">🏠</a><label class="theme">Mode <select id="theme"><option value="dark">Dark</option><option value="light">Light</option><option value="white">White</option></select></label></div></nav><main><slot /><footer class="build-stamp"><a href={`https://github.com/thebuilderofmoebius9/atom-landing/commit/${commit}`}>build {commit}</a> · {ref} · {built} GMT+7</footer></main></body></html>
