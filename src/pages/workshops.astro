@@ -12,7 +12,8 @@ const workshops = [
 ];
 ---
 <Base title="Workshop Proof">
-  <h1>Workshop Proof</h1>
+  <h1 lang="th">หลักฐานเวิร์กช็อป</h1>
+  <p class="subtitle" lang="en">Workshop Proof</p>
   <p class="lead">Blog map ของ workshop ที่เรียนมา พร้อม repo link สำหรับอ้างอิงต่อ.</p>
   <section class="grid">
     {workshops.map(([id, title, url]) => <a class="card" href={url}><span class="pill">{id}</span><h2>{title}</h2><p>{url}</p></a>)}
