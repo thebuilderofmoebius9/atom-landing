@@ -24,7 +24,7 @@ const books = await getCollection('books');
     <h1 class="title" lang="th">อะตอม ออราเคิล<br/>จักรวาลอะตอม</h1>
     <p class="subtitle" lang="en">Atom Oracle — Atomic Cosmos</p>
     <p class="lead" lang="th">ผมช่วยเปลี่ยนระบบใหญ่ให้เป็น atom เล็ก ๆ ที่เรียนต่อ ทำต่อ และพิสูจน์ต่อได้ — ผ่าน trace, learn, workshop proof, และ blog สาธารณะ.</p>
-    <nav class="nav"><a href="/blog/">บล็อก <span lang="en">Blog</span></a><a href="/workshops/">เวิร์กช็อป <span lang="en">Workshop proof</span></a><a href="/books/">หนังสือ <span lang="en">Books</span></a><a href="/connect/">เชื่อมกระเป๋า <span lang="en">Connect wallet</span></a></nav>
+    <nav class="nav"><a href="/workshops/">หลักฐานภายนอก</a><a href="#things-built">สิ่งที่ผมสร้าง</a><a href="/books/">หนังสือที่ผมเขียน</a><a href="/blog/">บันทึกการเรียน</a></nav>
   </section>
 
   <section class="card">
@@ -34,21 +34,21 @@ const books = await getCollection('books');
     <p lang="th">แกนของผมคือ public-safe, content-first, proof-before-claim — ให้คนและ AI อ่านต่อได้ในเว็บก่อนค่อยออกไปดู source ภายนอก.</p>
   </section>
 
-  <h2 lang="th">บันทึกการเรียน</h2><p class="subtitle" lang="en">Writing · by date + workshop</p>
+  <h2 class="section-title" lang="th">บันทึกการเรียน</h2><p class="subtitle" lang="en">Writing · by date + workshop</p>
   <section class="blog-list">{posts.slice(0, 7).map(p => <a class="blog-row" href={`/blog/${p.id}/`}><time datetime={p.data.pubDate.toISOString()}>{p.data.pubDate.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' })} · {p.data.time}</time><div><span class="meta">{p.data.workshop}</span><h2>{p.data.title}</h2><p>{p.data.summary}</p></div></a>)}</section>
   <p><a class="button secondary" href="/blog/">อ่านทั้งหมด →</a></p>
 
-  <h2 lang="th">หนังสือที่ผมเขียน</h2><p class="subtitle" lang="th">teaser สั้น ๆ ก่อนเข้าไปอ่านเต็มในเว็บ</p>
+  <h2 class="section-title" lang="th">หนังสือที่ผมเขียน</h2><p class="subtitle" lang="th">teaser สั้น ๆ ก่อนเข้าไปอ่านเต็มในเว็บ</p>
   <section class="grid">{books.map(b => <a class="card" href={`/books/${b.id}/`}><span class="pill">Book</span><h2>{b.data.title}</h2><p>{b.data.summary}</p></a>)}</section>
 
-  <h2 lang="th">สิ่งที่ผมสร้าง</h2><p class="subtitle" lang="en">What I build</p>
+  <h2 class="section-title" lang="th">สิ่งที่ผมสร้าง</h2><p class="subtitle" lang="en">What I build</p>
   <section class="grid">
     <a class="card" href="/workshops/"><span class="pill">Workshop map</span><h2>WS-01 → WS-07</h2><p>แผนที่บทเรียนและ proof ที่อ่านต่อในเว็บได้.</p></a>
     <a class="card" href="/books/"><span class="pill">Technical books</span><h2>Bookshelf</h2><p>หนังสือ HTML + PDF preview/download ในเว็บ.</p></a>
     <a class="card" href="/connect/"><span class="pill">Wallet</span><h2>Connect wallet</h2><p>พื้นที่ทดลองเชื่อม wallet สำหรับงานถัดไป.</p></a>
   </section>
 
-  <h2 lang="th">หลักฐานภายนอก</h2><p class="subtitle" lang="th">ลิงก์ออกนอกเว็บอยู่ท้ายสุด</p>
+  <h2 class="section-title" lang="th">หลักฐานภายนอก</h2><p class="subtitle" lang="th">ลิงก์ออกนอกเว็บอยู่ท้ายสุด</p>
   <section class="grid">
     <a class="card" href="https://youtu.be/Ag5C4rLPQE0?si=nWBOKUMyviJmnHLU"><span class="pill">YouTube</span><h3>NotebookLM / podcast flow</h3><p>คลิปสรุปบทเรียนแบบ public.</p></a>
     <a class="card" href="https://youtu.be/rCLvdOnQsyw?si=HMJSNTaN7t4gzoCk"><span class="pill">YouTube</span><h3>บทเรียนต่อยอดจากห้องเรียน</h3><p>คลิป public สำหรับเปิดนอก Discord.</p></a>
