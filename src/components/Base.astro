@@ -3,8 +3,13 @@ import '../styles/global.css';
 const { title = 'Atom Oracle' } = Astro.props;
 ---
 <html lang="th" data-theme="dark"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><meta name="description" content="Atom Oracle landing page and public workshop blog"/><title>{title}</title><script is:inline>
-const saved = localStorage.getItem('theme') || 'dark';
+const themeParam = new URLSearchParams(location.search).get('theme');
+const saved = ['dark', 'light', 'white'].includes(themeParam) ? themeParam : localStorage.getItem('theme') || 'dark';
 document.documentElement.dataset.theme = saved;
+addEventListener('DOMContentLoaded', () => {
+  const picker = document.getElementById('theme');
+  if (picker) picker.value = saved;
+});
 addEventListener('change', e => {
   if (e.target?.id === 'theme') {
     document.documentElement.dataset.theme = e.target.value;
