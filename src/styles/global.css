@@ -10,3 +10,9 @@ main{max-width:1120px;margin:auto;padding:56px 20px}.theme{position:fixed;right:
 .subtitle{max-width:720px;color:var(--muted);font-size:1.08rem;margin:-10px 0 14px}
 
 @media (min-width: 800px){body{font-size:18px}}
+
+a,.card,.nav a,.button,.reader button,.theme select{transition:border-color .15s ease,box-shadow .15s ease,transform .15s ease,background-color .15s ease,color .15s ease}
+a:hover{text-decoration-thickness:2px;text-underline-offset:.2em}
+.card:hover,.card:focus-visible{border-color:var(--atom);box-shadow:0 28px 90px var(--shadow),0 0 0 3px color-mix(in srgb,var(--atom) 35%,transparent);transform:translateY(-2px)}
+.nav a:hover,.nav a:focus-visible,.button:hover,.button:focus-visible,.reader button:hover,.reader button:focus-visible,.theme select:focus-visible{outline:3px solid var(--atom);outline-offset:3px;box-shadow:0 0 0 4px color-mix(in srgb,var(--atom) 25%,transparent)}
+.reader button:hover:not(:disabled){border-color:var(--atom);transform:translateY(-1px)}
