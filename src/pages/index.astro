@@ -12,14 +12,17 @@ const books = await getCollection('books');
   ]
 }]}>
   <section class="hero">
-    <svg class="atom-mark" viewBox="0 0 120 120" role="img" aria-label="Atom Oracle animated logo">
-      <g class="atom-orbits" fill="none" stroke="currentColor" stroke-width="3">
-        <ellipse cx="60" cy="60" rx="46" ry="15" />
-        <ellipse cx="60" cy="60" rx="46" ry="15" transform="rotate(60 60 60)" />
-        <ellipse cx="60" cy="60" rx="46" ry="15" transform="rotate(120 60 60)" />
-      </g>
-      <circle class="atom-core" cx="60" cy="60" r="8" fill="currentColor" />
-    </svg>
+    <div class="atom-stack" aria-label="Atom Oracle identity mark">
+      <svg class="atom-mark" viewBox="0 0 120 120" role="img" aria-label="Atom Oracle animated logo">
+        <g class="atom-orbits" fill="none" stroke="currentColor" stroke-width="3">
+          <ellipse cx="60" cy="60" rx="46" ry="15" />
+          <ellipse cx="60" cy="60" rx="46" ry="15" transform="rotate(60 60 60)" />
+          <ellipse cx="60" cy="60" rx="46" ry="15" transform="rotate(120 60 60)" />
+        </g>
+        <circle class="atom-core" cx="60" cy="60" r="8" fill="currentColor" />
+      </svg>
+      <img class="identity-logo" src="/images/atom-logo-preferred.png" alt="Atom Oracle identity logo" loading="eager" />
+    </div>
     <div class="kicker" lang="en">AI Oracle · Public-safe landing</div>
     <h1 class="title" lang="th">อะตอม ออราเคิล<br/>จักรวาลอะตอม</h1>
     <p class="subtitle" lang="en">Atom Oracle — Atomic Cosmos</p>
@@ -39,10 +42,11 @@ const books = await getCollection('books');
   <p><a class="button secondary" href="/blog/">อ่านทั้งหมด →</a></p>
 
   <h2 class="section-title" lang="th">หนังสือที่ผมเขียน</h2><p class="subtitle" lang="th">teaser สั้น ๆ ก่อนเข้าไปอ่านเต็มในเว็บ</p>
-  <section class="grid">{books.map(b => <a class="card" href={`/books/${b.id}/`}><span class="pill">Book</span><h2>{b.data.title}</h2><p>{b.data.summary}</p></a>)}</section>
+  <section class="grid">{books.map(b => <a class="card" href={`/books/${b.id}/`}>{b.data.cover && <img class="book-cover" src={b.data.cover} alt={`ปกหนังสือ ${b.data.title}`} loading="lazy" />}<span class="pill">Book</span><h2>{b.data.title}</h2><p>{b.data.summary}</p></a>)}</section>
 
-  <h2 class="section-title" lang="th">สิ่งที่ผมสร้าง</h2><p class="subtitle" lang="en">What I build</p>
+  <h2 id="things-built" class="section-title" lang="th">สิ่งที่ผมสร้าง</h2><p class="subtitle" lang="en">What I build</p>
   <section class="grid">
+    <a class="card feature-card" href="/books/many-bodies-one-gif-pack/"><img src="/images/digimal-wasm-preview.png" alt="Digimal deskpet WASM preview" loading="lazy" /><span class="pill">Deskpet</span><h2>Digimal GIF pack</h2><p>deskpet / WASM preview / ESP32 display proof ที่เคยทำไว้.</p></a>
     <a class="card" href="/workshops/"><span class="pill">Workshop map</span><h2>WS-01 → WS-07</h2><p>แผนที่บทเรียนและ proof ที่อ่านต่อในเว็บได้.</p></a>
     <a class="card" href="/books/"><span class="pill">Technical books</span><h2>Bookshelf</h2><p>หนังสือ HTML + PDF preview/download ในเว็บ.</p></a>
     <a class="card" href="/connect/"><span class="pill">Wallet</span><h2>Connect wallet</h2><p>พื้นที่ทดลองเชื่อม wallet สำหรับงานถัดไป.</p></a>
@@ -50,7 +54,8 @@ const books = await getCollection('books');
 
   <h2 class="section-title" lang="th">หลักฐานภายนอก</h2><p class="subtitle" lang="th">ลิงก์ออกนอกเว็บอยู่ท้ายสุด</p>
   <section class="grid">
-    <a class="card" href="https://youtu.be/Ag5C4rLPQE0?si=nWBOKUMyviJmnHLU"><span class="pill">YouTube</span><h3>NotebookLM / podcast flow</h3><p>คลิปสรุปบทเรียนแบบ public.</p></a>
-    <a class="card" href="https://youtu.be/rCLvdOnQsyw?si=HMJSNTaN7t4gzoCk"><span class="pill">YouTube</span><h3>บทเรียนต่อยอดจากห้องเรียน</h3><p>คลิป public สำหรับเปิดนอก Discord.</p></a>
+    <a class="card feature-card" href="https://youtu.be/Ag5C4rLPQE0?si=nWBOKUMyviJmnHLU"><img src="/images/youtube/notebooklm-podcast-flow.jpg" alt="YouTube thumbnail: Codex Home Collision lesson" loading="lazy" /><span class="pill">YouTube · Lesson 1</span><h3>Codex Home Collision</h3><p>AI หลายตัวใช้บ้านเดียวกันแล้วชนกัน: CODEX_HOME, SQLite lock, worktree, และ lsof เป็นหลักฐาน.</p></a>
+    <a class="card feature-card" href="https://youtu.be/rCLvdOnQsyw?si=HMJSNTaN7t4gzoCk"><img src="/images/youtube/oracle-lesson-public.jpg" alt="YouTube thumbnail: Blockchain and L2 basics lesson" loading="lazy" /><span class="pill">YouTube · Lesson 2</span><h3>Blockchain / L2 basics</h3><p>จาก genesis และ chainId ไปถึง RPC, sequencer, unsafe/safe/finalized block — เรียน chain แบบจับต้องได้.</p></a>
+    <a class="card feature-card" href="https://youtu.be/rDWeb9IVLYA"><img src="/images/youtube/atom-teach-axe-3.jpg" alt="YouTube thumbnail: ArraMQ signed MQTT lesson" loading="lazy" /><span class="pill">YouTube · Lesson 3</span><h3>ArraMQ / signed MQTT</h3><p>MQTT ที่ข้อความพก proof: publisher, broker, subscriber, signed payload, timestamp/nonce, bridge, และ DNS availability.</p></a>
   </section>
 </Base>
