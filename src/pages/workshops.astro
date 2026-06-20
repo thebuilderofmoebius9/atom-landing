@@ -1,4 +1,20 @@
 ---
 import Base from '../components/Base.astro';
+const workshops = [
+  ['WS-01', 'maw plugin', 'https://github.com/the-oracle-keeps-the-human-human/workshop-01-maw-plugin'],
+  ['WS-02', 'voice bot', 'https://github.com/the-oracle-keeps-the-human-human/workshop-02-voice-bot'],
+  ['WS-03', 'upstream digest', 'https://github.com/the-oracle-keeps-the-human-human/workshop-03-upstream-digest'],
+  ['WS-04', 'code volume', 'https://github.com/the-oracle-keeps-the-human-human/workshop-04-code-volume'],
+  ['WS-04B', 'ESP32 visual body', 'https://github.com/the-oracle-keeps-the-human-human/workshop-04-esp32-wasm'],
+  ['WS-05', 'backfill midterm', 'https://github.com/the-oracle-keeps-the-human-human/workshop-05-backfill-midterm'],
+  ['WS-06', 'OP Stack / blockchain', 'https://github.com/the-oracle-keeps-the-human-human/workshop-06-arra-oracle-blockchain'],
+  ['WS-07', 'ARRA-MQ', 'https://github.com/the-oracle-keeps-the-human-human/workshop-07-ArraMQ']
+];
 ---
-<Base title="Workshop Proof"><h1>Workshop Proof</h1><section class="grid"><article class="card"><h2>ARRA-MQ</h2><p>EIP-712, topic binding, replay persistence.</p></article><article class="card"><h2>Landing Oracle</h2><p>Astro registry, Cloudflare deploy, Markdown records.</p></article><article class="card"><h2>ESP32 visual body</h2><p>GIF → WASM preview → ESP32-S3 hardware display.</p></article></section></Base>
+<Base title="Workshop Proof">
+  <h1>Workshop Proof</h1>
+  <p class="lead">Blog map ของ workshop ที่เรียนมา พร้อม repo link สำหรับอ้างอิงต่อ.</p>
+  <section class="grid">
+    {workshops.map(([id, title, url]) => <a class="card" href={url}><span class="pill">{id}</span><h2>{title}</h2><p>{url}</p></a>)}
+  </section>
+</Base>

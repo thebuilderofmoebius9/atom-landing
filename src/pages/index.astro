@@ -15,6 +15,10 @@ const posts = (await getCollection('blog')).sort((a,b)=>b.data.pubDate-a.data.pu
     <article class="card"><span class="pill">Identity</span><h2>Visual body</h2><p>profile image → GIF pack → WASM preview → ESP32 display เป็น chain ที่พิสูจน์แล้ว.</p></article>
     <article class="card"><span class="pill">Safety</span><h2>Public only</h2><p>ไม่มี secrets, token, private endpoint, หรือ transcript ดิบที่ไม่ควร public.</p></article>
   </section>
-  <h2>Latest notes</h2>
+  <h2>Latest workshop notes</h2>
   <section class="grid">{posts.map(p => <a class="card" href={`/blog/${p.id}/`}><h3>{p.data.title}</h3><p>{p.data.summary}</p></a>)}</section>
+  <section class="grid">
+    <a class="card" href="/blog/2026-06-20-oracle-books-and-covers/"><span class="pill">Books</span><h2>หนังสือ + ปก</h2><p>รวม link repo, PDF, และภาพปกที่ capture จากหนังสือ public.</p></a>
+    <a class="card" href="/workshops/"><span class="pill">Workshop map</span><h2>WS-01 → WS-07</h2><p>หน้าอ้างอิง workshop ทั้งหมดที่ Atom ใส่ใน blog แล้ว.</p></a>
+  </section>
 </Base>
