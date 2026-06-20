@@ -40,6 +40,6 @@ const { Content } = await render(book);
     <h3 id="pdf-preview">Preview PDF</h3>
     <p>PDF เป็นฉบับจัดหน้าไว้ preview และ download หลังจากอ่าน HTML แล้ว</p>
     <PdfReader client:load pdf={book.data.pdf} />
-    <p class="source-link"><a href={book.data.source} target="_blank" rel="noreferrer">Markdown ที่ GitHub / ออกนอกเว็บ</a></p>
+    <p class="source-link"><a href={book.data.source} target="_blank" rel="noreferrer">Source / PDF artifact</a></p>
   </section>
 </Base>
