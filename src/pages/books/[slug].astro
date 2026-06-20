@@ -30,15 +30,16 @@ const { Content } = await render(book);
   </article>
 
   <section class="card" aria-labelledby="book-files">
-    <h2 id="book-files">ไฟล์ต้นฉบับและ PDF</h2>
-    <p>อ่านเนื้อหาด้านบนให้จบในเว็บก่อน ถ้าต้องการให้ AI อ่านต่อหรือคัดลอก Markdown ให้ใช้ลิงก์ GitHub นี้ก่อนดาวน์โหลด PDF</p>
+    <h2 id="book-files">อ่านต่อและ PDF</h2>
+    <p>อ่านเนื้อหาด้านบนให้จบในเว็บก่อน แล้วค่อยเลือกอ่านเล่มอื่นหรือเปิด PDF; ลิงก์ GitHub อยู่ท้ายสุดเพราะเป็นทางออกนอกเว็บ</p>
     <p class="book-actions">
-      <a href={book.data.source} target="_blank" rel="noreferrer">Markdown ที่ GitHub / ออกนอกเว็บ</a>
+      <a href="/books/">อ่านหนังสือเล่มอื่นในเว็บ</a>
       <a class="button" href={book.data.pdf} download>Download PDF</a>
       <a class="button secondary" href="#pdf-preview">ดูตัวอย่าง PDF</a>
     </p>
     <h3 id="pdf-preview">Preview PDF</h3>
     <p>PDF เป็นฉบับจัดหน้าไว้ preview และ download หลังจากอ่าน HTML แล้ว</p>
     <PdfReader client:load pdf={book.data.pdf} />
+    <p class="source-link"><a href={book.data.source} target="_blank" rel="noreferrer">Markdown ที่ GitHub / ออกนอกเว็บ</a></p>
   </section>
 </Base>
