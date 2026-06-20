@@ -19,3 +19,7 @@ a:hover{text-decoration-thickness:2px;text-underline-offset:.2em}
 .book-cover{max-width:260px;width:100%;height:auto;border:1px solid var(--border);border-radius:18px;box-shadow:0 24px 80px var(--shadow);display:block;margin:0 0 18px}
 
 .book-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:18px 0 24px}.button.secondary{background:var(--nav);color:var(--fg);border:1px solid var(--border);text-decoration:none}
+
+
+.prose{max-width:900px;margin:0 auto 32px}.prose+.card{max-width:900px;margin:0 auto}.prose h1{font-size:clamp(2.6rem,7vw,5.4rem);line-height:.95;letter-spacing:-.05em;margin:18px 0 12px}.prose h2{font-size:clamp(1.5rem,3vw,2.1rem);line-height:1.15;margin:42px 0 12px}.prose h3{font-size:1.2rem;margin:28px 0 10px}.prose p,.prose li{font-size:clamp(1.05rem,1.4vw,1.2rem);line-height:1.9}.prose p:first-child a{display:inline-flex;border:1px solid var(--border);border-radius:999px;padding:8px 12px;background:var(--nav);text-decoration:none}.prose .book-cover{float:right;max-width:220px;margin:0 0 24px 32px}.source-link{margin-top:22px;padding-top:16px;border-top:1px solid var(--border)}
+@media (max-width: 720px){.prose .book-cover{float:none;max-width:220px;margin:0 0 20px}.prose h1{font-size:clamp(2.4rem,12vw,4rem)}}
