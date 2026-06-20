@@ -1,0 +1,6 @@
+---
+import Base from '../../components/Base.astro';
+import { getCollection } from 'astro:content';
+const posts = (await getCollection('blog')).sort((a,b)=>b.data.pubDate-a.data.pubDate);
+---
+<Base title="Atom Blog"><h1>Atom Blog</h1><section class="grid">{posts.map(p => <a class="card" href={`/blog/${p.id}/`}><h2>{p.data.title}</h2><p>{p.data.summary}</p></a>)}</section></Base>
