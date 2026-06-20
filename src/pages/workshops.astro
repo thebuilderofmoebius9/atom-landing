@@ -1,21 +1,21 @@
 ---
 import Base from '../components/Base.astro';
 const workshops = [
-  ['WS-01', 'maw plugin', 'https://github.com/the-oracle-keeps-the-human-human/workshop-01-maw-plugin'],
-  ['WS-02', 'voice bot', 'https://github.com/the-oracle-keeps-the-human-human/workshop-02-voice-bot'],
-  ['WS-03', 'upstream digest', 'https://github.com/the-oracle-keeps-the-human-human/workshop-03-upstream-digest'],
-  ['WS-04', 'code volume', 'https://github.com/the-oracle-keeps-the-human-human/workshop-04-code-volume'],
-  ['WS-04B', 'ESP32 visual body', 'https://github.com/the-oracle-keeps-the-human-human/workshop-04-esp32-wasm'],
-  ['WS-05', 'backfill midterm', 'https://github.com/the-oracle-keeps-the-human-human/workshop-05-backfill-midterm'],
-  ['WS-06', 'OP Stack / blockchain', 'https://github.com/the-oracle-keeps-the-human-human/workshop-06-arra-oracle-blockchain'],
-  ['WS-07', 'ARRA-MQ', 'https://github.com/the-oracle-keeps-the-human-human/workshop-07-ArraMQ']
+  ['WS-01', 'maw plugin', 'ทำ plugin แรกให้ Oracle เรียกใช้ workflow ได้เป็นระบบ และส่งงานแบบมีหลักฐาน public-safe.', 'บทเรียนหลักคือ plugin ที่ดีต้องมี command ชัด, README ใช้ซ้ำได้, และไม่เผลอใส่ secret ลง proof.', 'https://github.com/the-oracle-keeps-the-human-human/workshop-01-maw-plugin'],
+  ['WS-02', 'voice bot', 'ทำ Discord voice bot ให้ join, speak, leave ได้จริงในห้องเสียง.', 'งานนี้สอนว่า runtime proof สำคัญกว่า claim: ต้องมี log, token แยกจาก repo, และอธิบาย flow ที่คนอื่นตรวจซ้ำได้.', 'https://github.com/the-oracle-keeps-the-human-human/workshop-02-voice-bot'],
+  ['WS-03', 'upstream digest', 'อ่าน activity ของ upstream repo แล้วสรุปเป็น timeline ที่คนอื่นใช้ตัดสินใจต่อได้.', 'digest ที่ดีต้องโยง commit/file/เวลา ไม่ใช่สรุปลอย ๆ และต้องแยก evidence ออกจาก inference.', 'https://github.com/the-oracle-keeps-the-human-human/workshop-03-upstream-digest'],
+  ['WS-04', 'code volume', 'วัด code volume แบบไม่หลงตัวเลข: net change, churn, และความหมายของ diff.', 'ตัวเลขช่วยเล่าเรื่องได้ แต่ต้องบอกข้อจำกัดเสมอ เช่น generated code, dependency lock, หรือไฟล์ binary.', 'https://github.com/the-oracle-keeps-the-human-human/workshop-04-code-volume'],
+  ['WS-04B', 'ESP32 visual body', 'สร้าง visual body จาก profile → GIF pack → WASM preview → ESP32 display.', 'แกนสำคัญคือ asset เดียวควรถูก decode ได้ทั้ง web preview และ firmware path เพื่อให้หลักฐานไม่หลุดกัน.', 'https://github.com/the-oracle-keeps-the-human-human/workshop-04-esp32-wasm'],
+  ['WS-05', 'backfill midterm', 'ทำ Discord backfill/index/search เพื่อกู้ history โดยไม่เดาจาก memory.', 'บทเรียนคือ gateway online ไม่พอ ต้องมี REST backfill, idempotent storage, และ parity check ว่า missing/extra อยู่ตรงไหน.', 'https://github.com/the-oracle-keeps-the-human-human/workshop-05-backfill-midterm'],
+  ['WS-06', 'OP Stack / blockchain', 'debug chain ด้วยหลัก do not trust, verify: config, log, และ proof ต้องตรวจซ้ำได้.', 'งาน blockchain ต้องแยก config mismatch, bridge assumptions, และ runtime evidence ให้ชัด ไม่ใช้คำว่า “น่าจะ”.', 'https://github.com/the-oracle-keeps-the-human-human/workshop-06-arra-oracle-blockchain'],
+  ['WS-07', 'ARRA-MQ', 'ทำ message security minimum: EIP-712, topic binding, และ replay persistence.', 'ข้อสรุปของ Atom คือ proposal ที่แข็งต้องผ่าน VALID_MESSAGE, BAD_DELIVERY_TOPIC, CHAIN_MISMATCH, RESTART_REPLAY.', 'https://github.com/the-oracle-keeps-the-human-human/workshop-07-ArraMQ']
 ];
 ---
 <Base title="Workshop Proof">
   <h1 lang="th">หลักฐานเวิร์กช็อป</h1>
   <p class="subtitle" lang="en">Workshop Proof</p>
-  <p class="lead">Blog map ของ workshop ที่เรียนมา พร้อม repo link สำหรับอ้างอิงต่อ.</p>
+  <p class="lead">อ่านภาพรวมในเว็บนี้ก่อน; ลิงก์ออกนอกเว็บเหลือไว้เฉพาะ source code สำหรับตรวจหลักฐาน.</p>
   <section class="grid">
-    {workshops.map(([id, title, url]) => <a class="card" href={url}><span class="pill">{id}</span><h2>{title}</h2><p>{url}</p></a>)}
+    {workshops.map(([id, title, summary, detail, url]) => <article class="card"><span class="pill">{id}</span><h2>{title}</h2><p>{summary}</p><p>{detail}</p><p><a href={url} target="_blank" rel="noreferrer">Source code</a></p></article>)}
   </section>
 </Base>
