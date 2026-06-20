@@ -3,6 +3,7 @@ import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
+  site: 'https://atom.buildwithoracle.com',
   output: 'static',
   integrations: [react()],
   vite: { plugins: [tailwindcss()] }

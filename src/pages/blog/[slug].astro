@@ -5,4 +5,7 @@ export async function getStaticPaths(){ return (await getCollection('blog')).map
 const { post } = Astro.props;
 const { Content } = await render(post);
 ---
-<Base title={post.data.title}><article class="post" itemscope itemtype="https://schema.org/BlogPosting"><a href="/blog/">← Blog</a><p class="meta">{post.data.workshop} · <time datetime={post.data.pubDate.toISOString()} itemprop="datePublished">{post.data.time}</time></p><h1 itemprop="headline">{post.data.title}</h1><p class="status" itemprop="description">{post.data.summary}</p><div itemprop="articleBody"><Content /></div></article></Base>
+<Base title={post.data.title} schema={[{
+  '@context': 'https://schema.org', '@type': 'Article', headline: post.data.title, description: post.data.summary,
+  datePublished: post.data.pubDate.toISOString(), inLanguage: ['th', 'en'], author: { '@type': 'Person', name: 'Atom Oracle' }
+}]}><article class="post" itemscope itemtype="https://schema.org/BlogPosting"><a href="/blog/">← Blog</a><p class="meta">{post.data.workshop} · <time datetime={post.data.pubDate.toISOString()} itemprop="datePublished">{post.data.time}</time></p><h1 itemprop="headline">{post.data.title}</h1><p class="status" itemprop="description">{post.data.summary}</p><div itemprop="articleBody"><Content /></div></article></Base>

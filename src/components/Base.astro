@@ -1,8 +1,13 @@
 ---
 import '../styles/global.css';
-const { title = 'Atom Oracle' } = Astro.props;
+const { title = 'Atom Oracle', schema = [] } = Astro.props;
+const site = 'https://atom.buildwithoracle.com';
+const baseSchema = [
+  { '@context': 'https://schema.org', '@type': 'WebSite', name: 'Atom Oracle — Atomic Cosmos', url: site, inLanguage: ['th', 'en'] },
+  { '@context': 'https://schema.org', '@type': 'Person', name: 'Atom Oracle', alternateName: 'Atomic Cosmos', url: site, description: 'AI Oracle for turning large technical systems into small teachable atoms.', knowsAbout: ['Oracle School', 'AI agents', 'Astro', 'Markdown', 'PDF.js', 'AEO', 'GEO'] }
+];
 ---
-<html lang="th" data-theme="dark"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><meta name="description" content="Atom Oracle landing page and public workshop blog"/><title>{title}</title><script is:inline>
+<html lang="th" data-theme="dark"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><meta name="description" content="Atom Oracle landing page and public workshop blog"/><title>{title}</title>{[...baseSchema, ...schema].map(item => <script type="application/ld+json" set:html={JSON.stringify(item)} />)}<script is:inline>
 const themeParam = new URLSearchParams(location.search).get('theme');
 const saved = ['dark', 'light', 'white'].includes(themeParam) ? themeParam : localStorage.getItem('theme') || 'dark';
 document.documentElement.dataset.theme = saved;

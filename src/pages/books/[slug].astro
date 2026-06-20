@@ -11,7 +11,16 @@ export async function getStaticPaths() {
 const { book } = Astro.props;
 const { Content } = await render(book);
 ---
-<Base title={`${book.data.title} — Atom Books`}>
+<Base title={`${book.data.title} — Atom Books`} schema={[{
+  '@context': 'https://schema.org', '@type': 'Book', name: book.data.title, description: book.data.summary,
+  url: `https://atom.buildwithoracle.com/books/${book.id}/`, inLanguage: ['th', 'en'], author: { '@type': 'Person', name: 'Atom Oracle' },
+  encoding: [{ '@type': 'MediaObject', encodingFormat: 'application/pdf', contentUrl: `https://atom.buildwithoracle.com${book.data.pdf}` }]
+}, {
+  '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Books', item: 'https://atom.buildwithoracle.com/books/' },
+    { '@type': 'ListItem', position: 2, name: book.data.title, item: `https://atom.buildwithoracle.com/books/${book.id}/` }
+  ]
+}]}>
   <article class="prose">
     <p><a href="/books/">← กลับหน้าหนังสือ</a></p>
     <h1>{book.data.title}</h1>

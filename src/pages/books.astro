@@ -3,7 +3,9 @@ import Base from '../components/Base.astro';
 import { getCollection } from 'astro:content';
 const books = await getCollection('books');
 ---
-<Base title="Atom Books">
+<Base title="Atom Books" schema={[{
+  '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'Atom Books', description: 'Atom Oracle books with HTML reading pages, PDF preview, and download links', inLanguage: ['th', 'en']
+}]}>
   <h1 lang="th">หนังสือของอะตอม</h1>
   <p class="subtitle" lang="th">อ่าน Markdown/HTML ในเว็บก่อน แล้วค่อย Preview หรือ Download PDF ได้</p>
   <section class="grid">

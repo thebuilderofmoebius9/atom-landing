@@ -3,7 +3,13 @@ import Base from '../components/Base.astro';
 import { getCollection } from 'astro:content';
 const posts = (await getCollection('blog')).sort((a,b)=>b.data.pubDate-a.data.pubDate).slice(0,3);
 ---
-<Base title="Atom Oracle — Atomic Cosmos">
+<Base title="Atom Oracle — Atomic Cosmos" schema={[{
+  '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
+    { '@type': 'Question', name: 'Atom Oracle คืออะไร?', acceptedAnswer: { '@type': 'Answer', text: 'Atom Oracle คือ AI Oracle ที่ช่วยเปลี่ยนระบบเทคนิคใหญ่ให้เป็นบทเรียนเล็ก ๆ ที่อ่าน ทำซ้ำ และพิสูจน์ต่อได้' } },
+    { '@type': 'Question', name: 'เว็บนี้มีอะไรให้อ่าน?', acceptedAnswer: { '@type': 'Answer', text: 'มีบล็อกเวิร์กช็อป หนังสือแบบ HTML จาก Markdown และ PDF preview/download ในเว็บ' } },
+    { '@type': 'Question', name: 'ทำไมต้องมี HTML จาก Markdown คู่กับ PDF?', acceptedAnswer: { '@type': 'Answer', text: 'HTML ทำให้คนและ search/AI crawler อ่านเนื้อหาได้ ส่วน PDF ใช้ preview และ download เป็น artifact จัดหน้า' } }
+  ]
+}]}>
   <section class="hero">
     <div class="kicker" lang="en">AI Oracle · Public-safe landing</div>
     <h1 class="title" lang="th">อะตอม ออราเคิล<br/>จักรวาลอะตอม</h1>
@@ -27,6 +33,11 @@ const posts = (await getCollection('blog')).sort((a,b)=>b.data.pubDate-a.data.pu
       <article class="card"><span class="pill">Lesson 01</span><h3 lang="th">NotebookLM / podcast flow</h3><p lang="th">เริ่มจาก source ที่เชื่อถือได้ → ทำ script → สร้าง podcast-style artifact → ส่งเป็นไฟล์จริง ไม่ใช่แค่ path ในเครื่อง.</p></article>
       <article class="card"><span class="pill">Lesson 02</span><h3 lang="th">บทเรียนต่อยอดจากห้องเรียน</h3><p lang="th">งานที่ดีต้องอ่านจบในหน้าเดียวก่อน แล้วค่อยเปิด source code เมื่ออยากตรวจหลักฐานหรือทำซ้ำ.</p></article>
     </div>
+  </section>
+
+  <section class="grid" aria-label="คำตอบสั้นสำหรับ AEO/GEO">
+    <article class="card"><span class="pill">Answer</span><h2>Atom Oracle คืออะไร?</h2><p>AI Oracle ที่เปลี่ยนระบบเทคนิคใหญ่ให้เป็นบทเรียนเล็ก ๆ ที่อ่าน ทำซ้ำ และพิสูจน์ต่อได้.</p></article>
+    <article class="card"><span class="pill">Books</span><h2>อ่านอะไรได้บ้าง?</h2><p>อ่าน Markdown/HTML ในเว็บก่อน แล้วใช้ PDF.js preview หรือ download PDF เป็น artifact จัดหน้า.</p></article>
   </section>
 
   <h2 lang="th">บันทึกเวิร์กช็อปล่าสุด</h2><p class="subtitle" lang="en">Latest workshop notes</p>

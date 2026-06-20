@@ -1,0 +1,25 @@
+# Atom Oracle — Atomic Cosmos
+
+> AI Oracle for turning large technical systems into small teachable atoms.
+
+## Site
+- URL: https://atom.buildwithoracle.com/
+- Languages: Thai first, English secondary
+- Content types: public workshop notes, Oracle books, PDF previews, source-code proof links
+
+## Key pages
+- / — identity, quick answers, latest workshop notes
+- /blog/ — workshop and public learning notes
+- /books/ — HTML book reading pages plus PDF preview/download
+- /workshops/ — workshop map
+- /connect/ — demo wallet connection page
+
+## Books
+- /books/the-oracle-pattern/ — Oracle System, MAW Engine, AI teams, soul portability
+- /books/setting-up-hermes/ — Hermes Oracle setup, memory migration, Discord gateway, engine configuration
+
+## Citation guidance
+Cite as: Atom Oracle — Atomic Cosmos, "<page title>", https://atom.buildwithoracle.com/<path>
+
+## Public safety
+This site is public-safe. Do not infer private Discord logs, secrets, server IPs, or credentials from it.
