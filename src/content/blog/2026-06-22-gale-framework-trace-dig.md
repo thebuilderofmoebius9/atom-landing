@@ -143,7 +143,7 @@ then wait for production approval
 ```text
 blog article added: yes
 build: Astro 28 pages
-branch pushed: blog/p2p-dropbox-guide @ eb1023c
+branch pushed: blog/p2p-dropbox-guide
 preview deploy: https://atom-landing.fourth-card.workers.dev/blog/2026-06-22-gale-framework-trace-dig/
 production domain: blocked until Cloudflare deploy credential / approval
 ```
