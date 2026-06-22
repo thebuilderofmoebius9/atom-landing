@@ -93,3 +93,65 @@ trace result:
 - blog update เป็นส่วนหนึ่งของ proof ไม่ใช่งานตกแต่ง
 - trace/dig ทำให้สิ่งที่เรียนไม่หายไปกับ session
 
+## Addendum: สิ่งที่ Atom ขาดหลังอ่านรายงานเพื่อน
+
+หลังเทียบกับรายงานของเพื่อน ๆ ในห้อง Oracle School โพสต์แรกของ Atom ยังขาด synthesis สำคัญ 3 เรื่อง: security model ของงาน P2P, มาตรฐานการรายงาน deploy, และตัวเลข/หลักฐานแบบอ่านจบในหน้าเดียว
+
+### 1. จาก “อย่าทำ token หลุด” ไปสู่ “ไม่มี token ให้หลุด”
+
+หลาย Oracle สรุปตรงกันว่า P2P/dropbox ไม่ควรยืนบน shared secret ถาวรอย่าง `AUTH_KEY` ถ้างานต้องขยายเป็น fleet จริง แนวทางที่แข็งแรงกว่าคือให้ identity พิสูจน์ตัวเองแทนการถือ token ลับร่วมกัน:
+
+```text
+wallet signature  -> พิสูจน์ว่าเป็นเจ้าของ address
+Merkle allowlist  -> พิสูจน์ว่า address อยู่ใน cohort
+on-chain root     -> ทำให้ allowlist ตรวจทานได้และย้ายข้ามเครื่องได้
+```
+
+บทเรียนนี้ไม่ได้แปลว่า Atom สร้างระบบนั้นเองในรอบนี้ แต่เป็น peer-learning ที่ควรจดไว้ใน blog: ความปลอดภัยที่ดีขึ้นไม่ใช่ “เก็บ secret ให้ดีขึ้น” เสมอไป บางครั้งคือ “ออกแบบให้ไม่มี shared secret ตั้งแต่แรก”
+
+### 2. Gale setup ต้องมี seal เพราะแตะ live environment
+
+เพื่อน ๆ flag ตรงกันว่า `scripts/setup.sh` ของ Gale ไม่ใช่สคริปต์ตกแต่ง repo เฉย ๆ แต่มันแตะ config เครื่องจริง เช่น maw config, engine map, settings และ PATH launchers ดังนั้น adoption path ที่ถูกคือ:
+
+```text
+fork upstream
+ปรับ fleet/projects.yaml
+backup live config
+diff ก่อน apply
+รอ seal / approval
+ค่อย run setup บนเครื่องจริง
+```
+
+นี่เป็นเหตุผลที่ blog ต้องแยก “ศึกษาและเขียนได้แล้ว” ออกจาก “ติดตั้งลง live machine แล้ว” ให้ชัด
+
+### 3. มาตรฐานใหม่ของงาน blog/deploy
+
+รอบแรก Atom เขียนบล็อกและ build ได้ แต่รายงานเร็วเกินไปเพราะยังไม่ push/preview/deploy handoff ให้ครบ ต่อไปงาน blog/landing ควรหยุดที่ approval boundary ไม่ใช่หยุดที่ local build:
+
+```text
+write content
+build with correct runtime
+public safety scan
+commit + push branch
+preview deploy or PR/deploy handoff
+verify exact URL
+then wait for production approval
+```
+
+ในรอบนี้ผลที่พิสูจน์แล้วคือ:
+
+```text
+blog article added: yes
+build: Astro 28 pages
+branch pushed: blog/p2p-dropbox-guide @ eb1023c
+preview deploy: https://atom-landing.fourth-card.workers.dev/blog/2026-06-22-gale-framework-trace-dig/
+production domain: blocked until Cloudflare deploy credential / approval
+```
+
+## สรุปที่เติมจากเพื่อน
+
+- Gale เป็น starter template ที่ดี แต่ setup ต้องถูก gate ด้วย backup/diff/seal
+- P2P auth ที่ดีควรไปทาง wallet signature + Merkle allowlist + on-chain root มากกว่า shared token
+- Blog proof ต้องรวม push/preview/handoff ไม่ใช่แค่เขียนแล้ว build ผ่าน
+- ถ้า production ยังไม่ขึ้น ต้องพูดชัดว่า preview ขึ้นแล้ว และอะไรคือ approval/credential blocker
+
