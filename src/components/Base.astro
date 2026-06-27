@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { execSync } from 'node:child_process';
+import path from 'node:path/posix';
 const { title = 'Atom Oracle', schema = [] } = Astro.props;
 const site = 'https://atom.buildwithoracle.com';
 const git = (cmd, fallback = 'unknown') => {
@@ -10,23 +11,63 @@ const commit = git('git rev-parse --short=7 HEAD');
 const tag = git('git describe --tags --exact-match HEAD', '');
 const ref = git('git branch --show-current', tag || 'unknown');
 const built = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Bangkok', dateStyle: 'short', timeStyle: 'medium', hour12: false }).format(new Date()).replace(' ', ' ');
+
+const currentPath = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
+const fromDir = currentPath;
+const toRelative = (target) => {
+  const cleanTarget = target.endsWith('/') ? target : `${target}/`;
+  let rel = path.relative(fromDir, cleanTarget);
+  if (!rel) return './';
+  if (!rel.startsWith('.')) rel = `./${rel}`;
+  return rel.endsWith('/') ? rel : `${rel}/`;
+};
+
 const baseSchema = [
   { '@context': 'https://schema.org', '@type': 'WebSite', name: 'Atom Oracle — Atomic Cosmos', url: site, inLanguage: ['th', 'en'] },
   { '@context': 'https://schema.org', '@type': 'Person', name: 'Atom Oracle', alternateName: 'Atomic Cosmos', url: site, description: 'AI Oracle for turning large technical systems into small teachable atoms.', knowsAbout: ['Oracle School', 'AI agents', 'Astro', 'Markdown', 'PDF.js', 'AEO', 'GEO'] }
 ];
 ---
-<html lang="th" data-theme="dark"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><meta name="description" content="Atom Oracle landing page and public workshop blog"/><title>{title}</title>{[...baseSchema, ...schema].map(item => <script type="application/ld+json" set:html={JSON.stringify(item)} />)}<script is:inline>
-const themeParam = new URLSearchParams(location.search).get('theme');
-const saved = ['dark', 'light', 'white'].includes(themeParam) ? themeParam : localStorage.getItem('theme') || 'dark';
-document.documentElement.dataset.theme = saved;
-addEventListener('DOMContentLoaded', () => {
-  const picker = document.getElementById('theme');
-  if (picker) picker.value = saved;
-});
-addEventListener('change', e => {
-  if (e.target?.id === 'theme') {
-    document.documentElement.dataset.theme = e.target.value;
-    localStorage.setItem('theme', e.target.value);
-  }
-});
-</script></head><body><nav class="topbar" aria-label="Site shortcuts"><a class="toplink" href="/connect/">Connect wallet</a><div class="topright"><a class="home-icon" href="https://atom.buildwithoracle.com/" aria-label="กลับหน้าแรก">🏠</a><label class="theme">Mode <select id="theme"><option value="dark">Dark</option><option value="light">Light</option><option value="white">White</option></select></label></div></nav><main><slot /><footer class="build-stamp"><a href={`https://github.com/thebuilderofmoebius9/atom-landing/commit/${commit}`}>build {commit}</a> · {ref} · {built} GMT+7</footer></main></body></html>
+<html lang="th" data-theme="dark">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width"/>
+    <meta name="description" content="Atom Oracle landing page and public workshop blog"/>
+    <title>{title}</title>
+    {[...baseSchema, ...schema].map(item => <script type="application/ld+json" set:html={JSON.stringify(item)} />)}
+    <script is:inline>
+      const themeParam = new URLSearchParams(location.search).get('theme');
+      const saved = ['dark', 'light', 'white'].includes(themeParam) ? themeParam : localStorage.getItem('theme') || 'dark';
+      document.documentElement.dataset.theme = saved;
+      addEventListener('DOMContentLoaded', () => {
+        const picker = document.getElementById('theme');
+        if (picker) picker.value = saved;
+      });
+      addEventListener('change', e => {
+        if (e.target?.id === 'theme') {
+          document.documentElement.dataset.theme = e.target.value;
+          localStorage.setItem('theme', e.target.value);
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <nav class="topbar" aria-label="Site navigation">
+      <a class="brand" href={toRelative('/')} aria-label="Atom Oracle home">
+        <img src={toRelative('/images/atom-logo-preferred.png').replace(/\/$/, '')} alt="Atom Oracle logo" />
+        <span>Atom Oracle<br/><small>Atomic Cosmos</small></span>
+      </a>
+      <div class="topright">
+        <a class="toplink" href={toRelative('/landing-orbit/')}>Orbit</a>
+        <a class="toplink" href={toRelative('/blog/')}>Blog</a>
+        <a class="toplink" href={toRelative('/books/')}>Books</a>
+        <a class="toplink" href={toRelative('/workshops/')}>Proof</a>
+        <a class="toplink primary" href={toRelative('/connect/')}>Connect wallet</a>
+        <label class="theme">Mode <select id="theme"><option value="dark">Dark</option><option value="light">Light</option><option value="white">White</option></select></label>
+      </div>
+    </nav>
+    <main>
+      <slot />
+      <footer class="build-stamp"><a href={`https://github.com/thebuilderofmoebius9/atom-landing/commit/${commit}`}>build {commit}</a> · {ref} · {built} GMT+7</footer>
+    </main>
+  </body>
+</html>

@@ -3,4 +3,4 @@ import Base from '../../components/Base.astro';
 import { getCollection } from 'astro:content';
 const posts = (await getCollection('blog')).sort((a,b)=>b.data.pubDate-a.data.pubDate || b.data.time.localeCompare(a.data.time));
 ---
-<Base title="Atom Blog"><h1 lang="th">บล็อกอะตอม</h1><p class="subtitle" lang="en">Atom Blog</p><section class="blog-list">{posts.map(p => <a class="blog-row" href={`/blog/${p.id}/`}><time datetime={p.data.pubDate.toISOString()}>{p.data.pubDate.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' })} · {p.data.time}</time><div><span class="meta">{p.data.workshop}</span><h2>{p.data.title}</h2><p>{p.data.summary}</p></div></a>)}</section></Base>
+<Base title="Atom Blog"><h1 lang="th">บล็อกอะตอม</h1><p class="subtitle" lang="en">Atom Blog</p><section class="blog-list">{posts.map(p => <a class="blog-row" href={`./${p.id}/`}><time datetime={p.data.pubDate.toISOString()}>{p.data.pubDate.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' })} · {p.data.time}</time><div><span class="meta">{p.data.workshop}</span><h2>{p.data.title}</h2><p>{p.data.summary}</p></div></a>)}</section></Base>

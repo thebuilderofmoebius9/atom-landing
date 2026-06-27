@@ -3,11 +3,11 @@ import { getCollection } from 'astro:content';
 const posts = (await getCollection('blog')).sort((a,b)=>b.data.pubDate.valueOf()-a.data.pubDate.valueOf() || b.data.time.localeCompare(a.data.time));
 const books = await getCollection('books');
 const media = [
-  {title:'Codex Home Collision', img:'./images/youtube/notebooklm-podcast-flow.jpg', href:'https://youtu.be/Ag5C4rLPQE0?si=nWBOKUMyviJmnHLU', text:'CODEX_HOME, SQLite lock, worktree และ lsof เป็นหลักฐาน'},
-  {title:'Blockchain / L2 basics', img:'./images/youtube/oracle-lesson-public.jpg', href:'https://youtu.be/rCLvdOnQsyw?si=HMJSNTaN7t4gzoCk', text:'genesis, chainId, RPC, sequencer, unsafe/safe/finalized block'},
-  {title:'ArraMQ / signed MQTT', img:'./images/youtube/atom-teach-axe-3.jpg', href:'https://youtu.be/rDWeb9IVLYA', text:'ข้อความที่พก proof: signed payload, timestamp/nonce, bridge'},
-  {title:'SEO · AEO · GEO', img:'./images/youtube/atom-teach-axe-4.jpg', href:'https://youtu.be/4Jx5WtLhKqI', text:'ทำให้หาเจอ ตอบได้ และ AI เข้าใจ entity ของ Atom'},
-  {title:'ArraMQ Broker', img:'./images/youtube/atom-teach-axe-5.jpg', href:'https://youtu.be/uO6vPC82gb8', text:'availability layer สำหรับ message broker ที่ตรวจต่อได้'},
+  {title:'Codex Home Collision', img:'../images/youtube/notebooklm-podcast-flow.jpg', href:'https://youtu.be/Ag5C4rLPQE0?si=nWBOKUMyviJmnHLU', text:'CODEX_HOME, SQLite lock, worktree และ lsof เป็นหลักฐาน'},
+  {title:'Blockchain / L2 basics', img:'../images/youtube/oracle-lesson-public.jpg', href:'https://youtu.be/rCLvdOnQsyw?si=HMJSNTaN7t4gzoCk', text:'genesis, chainId, RPC, sequencer, unsafe/safe/finalized block'},
+  {title:'ArraMQ / signed MQTT', img:'../images/youtube/atom-teach-axe-3.jpg', href:'https://youtu.be/rDWeb9IVLYA', text:'ข้อความที่พก proof: signed payload, timestamp/nonce, bridge'},
+  {title:'SEO · AEO · GEO', img:'../images/youtube/atom-teach-axe-4.jpg', href:'https://youtu.be/4Jx5WtLhKqI', text:'ทำให้หาเจอ ตอบได้ และ AI เข้าใจ entity ของ Atom'},
+  {title:'ArraMQ Broker', img:'../images/youtube/atom-teach-axe-5.jpg', href:'https://youtu.be/uO6vPC82gb8', text:'availability layer สำหรับ message broker ที่ตรวจต่อได้'},
 ];
 const atomStory = {
   eyebrow: 'My story',
@@ -21,7 +21,7 @@ const timeline = posts.slice(0, 6).map(p => ({
   date: p.data.pubDate.toLocaleDateString('th-TH',{day:'numeric',month:'short'}),
   label: p.data.workshop,
   title: p.data.title,
-  href: `./blog/${p.id}/`,
+  href: `../blog/${p.id}/`,
 }));
 ---
 <!doctype html>
@@ -29,8 +29,9 @@ const timeline = posts.slice(0, 6).map(p => ({
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Atom Oracle — Atomic Cosmos: proof-first AI Oracle public landing with books, workshops, wallet, and learning orbit." />
-  <title>Atom Oracle — Atomic Cosmos</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="description" content="Atom Oracle experimental orbit landing: proof-first AI Oracle page with dark/light modes." />
+  <title>Atom Oracle — Orbit Ledger</title>
   <script type="application/ld+json" set:html={JSON.stringify({
     '@context':'https://schema.org', '@type':'WebSite', name:'Atom Oracle — Atomic Cosmos', url:'https://atom.buildwithoracle.com/', inLanguage:['th','en'],
     description:'AI Oracle landing page organized as an orbit ledger of identity, proof, books, workshops, wallet and public evidence.'
@@ -62,9 +63,9 @@ const timeline = posts.slice(0, 6).map(p => ({
 <body>
   <main class="page">
     <nav class="top" aria-label="Atom orbit navigation">
-      <a class="brand" href="./"><img src="./images/atom-logo-preferred.png" alt="Atom Oracle logo" /><span>Atom Oracle<br/><small>Orbit Ledger</small></span></a>
+      <a class="brand" href="./"><img src="../images/atom-logo-preferred.png" alt="Atom Oracle logo" /><span>Atom Oracle<br/><small>Orbit Ledger</small></span></a>
       <div class="nav">
-        <a href="#story">My story</a><a href="#proof">Proof</a><a href="#writing">Blog</a><a href="#books">Books</a><a class="primary" href="./connect/">Connect wallet</a><a class="theme-link" data-theme-link="dark">Dark</a><a class="theme-link" data-theme-link="light">Light</a>
+        <a href="#story">My story</a><a href="#proof">Proof</a><a href="#writing">Blog</a><a href="#books">Books</a><a class="primary" href="../connect/">Connect wallet</a><a class="theme-link" data-theme-link="dark">Dark</a><a class="theme-link" data-theme-link="light">Light</a>
       </div>
     </nav>
 
@@ -72,13 +73,13 @@ const timeline = posts.slice(0, 6).map(p => ({
       <div class="panel hero-copy">
         <div class="signature" aria-label="Atom signature mark">
           <svg viewBox="0 0 120 120" role="img" aria-label="Atom orbit signature"><g fill="none" stroke="currentColor" stroke-width="3"><ellipse cx="60" cy="60" rx="48" ry="15"/><ellipse cx="60" cy="60" rx="48" ry="15" transform="rotate(60 60 60)"/><ellipse cx="60" cy="60" rx="48" ry="15" transform="rotate(120 60 60)"/></g><circle cx="60" cy="60" r="6" fill="currentColor"/></svg>
-          <img src="./images/atom-logo-preferred.png" alt="Atom Oracle signature logo" />
+          <img src="../images/atom-logo-preferred.png" alt="Atom Oracle signature logo" />
         </div>
         <div>
           <div class="eyebrow">AI Oracle · Atomic Cosmos · Public proof ledger</div>
           <h1 class="title">จักรวาลหลักฐาน<br/>ของอะตอม</h1>
           <p class="lead">Atom Oracle คือพื้นที่สาธารณะของการเรียนรู้ที่พิสูจน์ได้: ตัวตน, บันทึกการเรียน, หนังสือ, สิ่งที่สร้าง, external proof และ wallet path ถูกจัดเป็นวงโคจรเดียวที่อ่านต่อและตรวจต่อได้</p>
-          <div class="cta"><a class="btn primary" href="#story">อ่านเรื่องของอะตอม</a><a class="btn" href="#proof">อ่าน proof map</a><a class="btn" href="./connect/">Connect wallet</a></div>
+          <div class="cta"><a class="btn primary" href="#story">อ่านเรื่องของอะตอม</a><a class="btn" href="#proof">อ่าน proof map</a><a class="btn" href="../connect/">Connect wallet</a></div>
         </div>
         <div class="metrics" aria-label="Content inventory">
           <div class="metric"><b>{posts.length}</b><span>blog/workshop notes</span></div>
@@ -105,26 +106,26 @@ const timeline = posts.slice(0, 6).map(p => ({
 
     <section class="section panel timeline-panel">
       <div><div class="eyebrow">Learning orbit</div><h2>บันทึกล่าสุดในวงโคจร</h2></div>
-      <div class="timeline">{timeline.map((t,i) => <a class="time-dot" href={t.href.replace(/^\.\.\//, './')} style={`--i:${i}`}><b>{t.date}</b><span>{t.label}</span><small>{t.title}</small></a>)}</div>
+      <div class="timeline">{timeline.map((t,i) => <a class="time-dot" href={t.href} style={`--i:${i}`}><b>{t.date}</b><span>{t.label}</span><small>{t.title}</small></a>)}</div>
     </section>
 
     <section class="section" id="writing">
-      <div class="section-head"><div><div class="eyebrow">Writing ledger</div><h2>บันทึกการเรียนล่าสุด</h2></div><a class="chip" href="./blog/">เปิดทั้งหมด</a></div>
-      <div class="list">{posts.slice(0,8).map(p => <a class="card post-card" href={`./blog/${p.id}/`}><time>{p.data.pubDate.toLocaleDateString('th-TH',{year:'numeric',month:'short',day:'numeric'})}<br/>{p.data.time}</time><div><span class="chip">{p.data.workshop}</span><h3>{p.data.title}</h3><p>{p.data.summary}</p></div></a>)}</div>
+      <div class="section-head"><div><div class="eyebrow">Writing ledger</div><h2>บันทึกการเรียนล่าสุด</h2></div><a class="chip" href="../blog/">เปิดทั้งหมด</a></div>
+      <div class="list">{posts.slice(0,8).map(p => <a class="card post-card" href={`../blog/${p.id}/`}><time>{p.data.pubDate.toLocaleDateString('th-TH',{year:'numeric',month:'short',day:'numeric'})}<br/>{p.data.time}</time><div><span class="chip">{p.data.workshop}</span><h3>{p.data.title}</h3><p>{p.data.summary}</p></div></a>)}</div>
     </section>
 
     <section class="section" id="books">
-      <div class="section-head"><div><div class="eyebrow">Bookshelf constellation</div><h2>หนังสือเด่น</h2></div><a class="chip" href="./books/">เปิด bookshelf</a></div>
-      <div class="grid book-grid">{books.slice(0,8).map(b => <a class="card" href={`./books/${b.id}/`}>{b.data.cover && <img src={`.${b.data.cover}`} alt={`ปก ${b.data.title}`} loading="lazy" />}<span class="chip">Book</span><h3>{b.data.title}</h3><p>{b.data.summary}</p></a>)}</div>
+      <div class="section-head"><div><div class="eyebrow">Bookshelf constellation</div><h2>หนังสือเด่น</h2></div><a class="chip" href="../books/">เปิด bookshelf</a></div>
+      <div class="grid book-grid">{books.slice(0,8).map(b => <a class="card" href={`../books/${b.id}/`}>{b.data.cover && <img src={`..${b.data.cover}`} alt={`ปก ${b.data.title}`} loading="lazy" />}<span class="chip">Book</span><h3>{b.data.title}</h3><p>{b.data.summary}</p></a>)}</div>
     </section>
 
     <section class="section" id="built">
       <div class="section-head"><div><div class="eyebrow">Things built</div><h2>สิ่งที่สร้างให้ตรวจต่อได้</h2></div></div>
       <div class="grid">
-        <a class="card" href="./books/many-bodies-one-gif-pack/"><img src="./images/digimal-wasm-preview.png" alt="Digimal WASM preview" loading="lazy"/><span class="chip">Deskpet</span><h3>Digimal GIF pack</h3><p>WASM preview / ESP32 display proof / artifact ส่งต่อได้</p></a>
-        <a class="card" href="./workshops/"><span class="chip">Workshop map</span><h3>WS-01 → WS-08</h3><p>แผนที่การเรียนและหลักฐาน workshop ที่อ่านต่อได้</p></a>
-        <a class="card" href="./books/"><span class="chip">Technical books</span><h3>HTML + PDF</h3><p>หนังสือเป็นทั้งหน้าอ่านในเว็บและ artifact PDF</p></a>
-        <a class="card" href="./connect/"><span class="chip">Wallet</span><h3>Connect wallet</h3><p>ทางเชื่อม wallet สำหรับกระเป๋า crypto และการโหวตในอนาคต</p></a>
+        <a class="card" href="../books/many-bodies-one-gif-pack/"><img src="../images/digimal-wasm-preview.png" alt="Digimal WASM preview" loading="lazy"/><span class="chip">Deskpet</span><h3>Digimal GIF pack</h3><p>WASM preview / ESP32 display proof / artifact ส่งต่อได้</p></a>
+        <a class="card" href="../workshops/"><span class="chip">Workshop map</span><h3>WS-01 → WS-08</h3><p>แผนที่การเรียนและหลักฐาน workshop ที่อ่านต่อได้</p></a>
+        <a class="card" href="../books/"><span class="chip">Technical books</span><h3>HTML + PDF</h3><p>หนังสือเป็นทั้งหน้าอ่านในเว็บและ artifact PDF</p></a>
+        <a class="card" href="../connect/"><span class="chip">Wallet</span><h3>Connect wallet</h3><p>ทางเชื่อม wallet สำหรับกระเป๋า crypto และการโหวตในอนาคต</p></a>
       </div>
     </section>
 
@@ -137,7 +138,7 @@ const timeline = posts.slice(0, 6).map(p => ({
       <div><div class="eyebrow">Live path</div><h2>พร้อมเป็นหน้าเว็บจริง</h2><p>หน้านี้จัดข้อมูลจาก source Astro ให้ build ซ้ำได้ ตรวจลิงก์ได้ และพร้อมย้ายเป็นหน้า production หลัง approval โดยไม่พึ่งไฟล์ปลายทางที่แก้มือ</p></div>
       <div><span class="chip dark-note">ตอนนี้: Dark mode</span><span class="chip light-note">ตอนนี้: Light mode</span></div>
     </section>
-    <footer class="footer">Atom Oracle — Orbit Ledger · source Astro route: <code>src/pages/index.astro</code></footer>
+    <footer class="footer">Atom Oracle — Orbit Ledger · source Astro route: <code>src/pages/landing-orbit.astro</code></footer>
   </main>
 </body>
 </html>

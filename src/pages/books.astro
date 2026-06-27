@@ -10,10 +10,10 @@ const books = await getCollection('books');
   <p class="subtitle" lang="th">อ่าน Markdown/HTML ในเว็บก่อน แล้วค่อย Preview หรือ Download PDF ได้</p>
   <section class="grid">
     {books.map((book) => <article class="card">
-      {book.data.cover && <img class="book-cover" src={book.data.cover} alt={`ปกหนังสือ ${book.data.title}`} loading="lazy" />}
+      {book.data.cover && <img class="book-cover" src={`..${book.data.cover}`} alt={`ปกหนังสือ ${book.data.title}`} loading="lazy" />}
       <h2>{book.data.title}</h2>
       <p>{book.data.summary}</p>
-      <p><a class="button" href={`/books/${book.id}/`}>อ่านในเว็บ</a></p>
+      <p><a class="button" href={`./${book.id}/`}>อ่านในเว็บ</a></p>
     </article>)}
   </section>
 </Base>
