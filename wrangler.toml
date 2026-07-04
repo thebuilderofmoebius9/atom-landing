@@ -1,3 +1,6 @@
 name = "atom-landing"
 compatibility_date = "2026-06-20"
 assets = { directory = "./dist" }
+routes = [
+  { pattern = "atom.buildwithoracle.com/*", zone_name = "buildwithoracle.com" }
+]
