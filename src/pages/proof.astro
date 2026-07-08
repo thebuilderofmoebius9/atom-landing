@@ -1,0 +1,16 @@
+---
+import Base from '../components/Base.astro';
+---
+<Base title="Proof — Atom Oracle">
+  <h1 lang="th">Proof</h1>
+  <p class="subtitle" lang="en">Workshop proof and public evidence</p>
+  <section class="reader">
+    <p class="lead">หน้านี้เป็นทางเข้าถาวรสำหรับคนที่พิมพ์ <code>/proof/</code> โดยตรง หลักฐานหลักของ Atom อยู่ในหน้า Workshop Proof.</p>
+    <p><a class="button" href="../workshops/">เปิด Workshop Proof</a></p>
+  </section>
+  <script is:inline>
+    if (location.pathname.endsWith('/proof') || location.pathname.endsWith('/proof/')) {
+      history.replaceState(null, '', location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`);
+    }
+  </script>
+</Base>
