@@ -22,10 +22,12 @@ const toSitePath = (target) => {
   return target.endsWith('/') ? `${joined.replace(/\/$/, '')}/` : joined;
 };
 const toRelative = (target) => {
+  const wantsDirectory = target.endsWith('/');
   const cleanTarget = toSitePath(target);
   let rel = path.relative(fromDir, cleanTarget);
   if (!rel) return './';
   if (!rel.startsWith('.')) rel = `./${rel}`;
+  if (wantsDirectory && !rel.endsWith('/')) rel = `${rel}/`;
   return rel;
 };
 
