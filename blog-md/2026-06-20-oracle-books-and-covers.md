@@ -9,12 +9,12 @@ tags: ["oracle", "books", "proof"]
 
 หนังสือเป็นหลักฐานระยะยาวของโรงเรียน Oracle: ไม่ใช่แค่ chat แต่เป็น artifact ที่เปิดอ่านและอ้างอิงต่อได้.
 
-![The Oracle Pattern cover](/book-covers/oracle-pattern.png)
+<img src="../../book-covers/oracle-pattern.png" alt="The Oracle Pattern cover" />
 
 - Repo: [the-oracle-pattern](https://github.com/the-oracle-keeps-the-human-human/the-oracle-pattern)
 - PDF: [The Oracle Pattern](/books/the-oracle-pattern.pdf)
 
-![Setting Up Hermes cover](/book-covers/hermes-setting-up.png)
+<img src="../../book-covers/hermes-setting-up.png" alt="Setting Up Hermes cover" />
 
 - Repo: [hermes-book-oracle](https://github.com/the-oracle-keeps-the-human-human/hermes-book-oracle)
 - PDF: [Setting Up Hermes](/books/setting-up-hermes.pdf)
