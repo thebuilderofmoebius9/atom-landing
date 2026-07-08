@@ -14,12 +14,19 @@ const built = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Bangkok', dateS
 
 const currentPath = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
 const fromDir = currentPath;
+const basePath = import.meta.env.BASE_URL || '/';
+const baseRoot = basePath.endsWith('/') ? basePath : `${basePath}/`;
+const toSitePath = (target) => {
+  if (target === '/') return baseRoot;
+  const joined = path.join(baseRoot, target.replace(/^\/+/, ''));
+  return target.endsWith('/') ? `${joined.replace(/\/$/, '')}/` : joined;
+};
 const toRelative = (target) => {
-  const cleanTarget = target.endsWith('/') ? target : `${target}/`;
+  const cleanTarget = toSitePath(target);
   let rel = path.relative(fromDir, cleanTarget);
   if (!rel) return './';
   if (!rel.startsWith('.')) rel = `./${rel}`;
-  return rel.endsWith('/') ? rel : `${rel}/`;
+  return rel;
 };
 
 const baseSchema = [
