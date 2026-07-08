@@ -10,3 +10,6 @@
 
 /* code blocks should wrap inside their panel, not visually run past the box */
 .post pre,.prose pre,.book-body pre{white-space:pre-wrap;overflow-x:hidden}.post pre code,.prose pre code,.book-body pre code{min-width:0;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}.post pre .line,.prose pre .line,.book-body pre .line{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
+
+/* Visual QA: code panels stay dark in every theme, so force readable ink. */
+.post pre,.prose pre,.book-body pre{color:#eaf6ff}.post pre code,.prose pre code,.book-body pre code{color:inherit}.post pre a,.prose pre a,.book-body pre a{color:#93f3ff}
