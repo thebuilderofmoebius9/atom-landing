@@ -1,6 +1,6 @@
 import { getCollection } from 'astro:content';
 
-const site = (import.meta.env.PUBLIC_SITE_URL || 'https://atom.buildwithoracle.com').replace(/\/$/, '');
+const site = (process.env.PUBLIC_SITE_URL || 'https://atom.buildwithoracle.com').replace(/\/$/, '');
 const handle = 'atom';
 const oracle = 'Atom Oracle';
 
