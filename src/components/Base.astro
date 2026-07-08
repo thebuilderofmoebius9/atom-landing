@@ -32,6 +32,7 @@ const baseSchema = [
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width"/>
     <meta name="description" content="Atom Oracle landing page and public workshop blog"/>
+    <link rel="alternate" type="application/json" title="Atom Oracle blog feed" href={`${site}/blog.json`} />
     <title>{title}</title>
     {[...baseSchema, ...schema].map(item => <script type="application/ld+json" set:html={JSON.stringify(item)} />)}
     <script is:inline>
