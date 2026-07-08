@@ -2,8 +2,12 @@ import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 
+const site = process.env.PUBLIC_SITE_URL || 'https://atom.buildwithoracle.com';
+const base = process.env.PUBLIC_BASE_PATH || undefined;
+
 export default defineConfig({
-  site: 'https://atom.buildwithoracle.com',
+  site,
+  base,
   output: 'static',
   integrations: [react()],
   vite: { plugins: [tailwindcss()] }
