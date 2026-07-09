@@ -3,6 +3,10 @@ import { getCollection } from 'astro:content';
 const posts = (await getCollection('blog')).sort((a,b)=>b.data.pubDate.valueOf()-a.data.pubDate.valueOf() || b.data.time.localeCompare(a.data.time));
 const books = await getCollection('books');
 const teachUrl = 'https://thebuilderofmoebius9.github.io/atom-teach-axe-site/';
+const orbitUrl = 'https://thebuilderofmoebius9.github.io/atom-landing/landing-orbit/';
+const orbitTitle = 'Atom Oracle — Orbit Ledger';
+const orbitDescription = 'จักรวาลหลักฐานของ Atom Oracle: ตัวตน บทเรียน หนังสือ proof และทางเข้า Atom Teach Axe ในหน้าเดียว';
+const orbitImage = 'https://thebuilderofmoebius9.github.io/atom-landing/images/og/atom-orbit-ledger.png';
 const media = [
   {title:'Codex Home Collision', img:'../images/youtube/notebooklm-podcast-flow.jpg', href:'https://youtu.be/Ag5C4rLPQE0?si=nWBOKUMyviJmnHLU', text:'CODEX_HOME, SQLite lock, worktree และ lsof เป็นหลักฐาน'},
   {title:'Blockchain / L2 basics', img:'../images/youtube/oracle-lesson-public.jpg', href:'https://youtu.be/rCLvdOnQsyw?si=HMJSNTaN7t4gzoCk', text:'genesis, chainId, RPC, sequencer, unsafe/safe/finalized block'},
@@ -30,12 +34,28 @@ const timeline = posts.slice(0, 6).map(p => ({
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="robots" content="noindex,nofollow" />
-  <meta name="description" content="Atom Oracle experimental orbit landing: proof-first AI Oracle page with dark/light modes." />
-  <title>Atom Oracle — Orbit Ledger</title>
+  <meta name="robots" content="index,follow" />
+  <meta name="description" content={orbitDescription} />
+  <link rel="canonical" href={orbitUrl} />
+  <meta name="theme-color" content="#05070d" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Atom Oracle — Atomic Cosmos" />
+  <meta property="og:title" content={orbitTitle} />
+  <meta property="og:description" content={orbitDescription} />
+  <meta property="og:url" content={orbitUrl} />
+  <meta property="og:image" content={orbitImage} />
+  <meta property="og:image:secure_url" content={orbitImage} />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={orbitTitle} />
+  <meta name="twitter:description" content={orbitDescription} />
+  <meta name="twitter:image" content={orbitImage} />
+  <title>{orbitTitle}</title>
   <script type="application/ld+json" set:html={JSON.stringify({
-    '@context':'https://schema.org', '@type':'WebSite', name:'Atom Oracle — Atomic Cosmos', url:'https://atom.buildwithoracle.com/', inLanguage:['th','en'],
-    description:'AI Oracle landing page organized as an orbit ledger of identity, proof, books, workshops, wallet and public evidence.'
+    '@context':'https://schema.org', '@type':'WebSite', name: orbitTitle, url: orbitUrl, inLanguage:['th','en'],
+    image: orbitImage, description: orbitDescription
   })}></script>
   <script is:inline>
     const params = new URLSearchParams(location.search);
