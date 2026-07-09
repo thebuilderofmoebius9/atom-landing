@@ -5,12 +5,12 @@ const books = await getCollection('books');
 const teachUrl = 'https://thebuilderofmoebius9.github.io/atom-teach-axe-site/?v=og1';
 const relayBlogUrl = 'https://thebuilderofmoebius9.github.io/atom-discord-relay-ws/blog/atom-discord-gateway-relay/';
 const media = [
-  {title:'Codex Home Collision', img:'./images/youtube/notebooklm-podcast-flow.jpg', href:'https://youtu.be/Ag5C4rLPQE0?si=nWBOKUMyviJmnHLU', text:'CODEX_HOME, SQLite lock, worktree และ lsof เป็นหลักฐาน'},
-  {title:'Blockchain / L2 basics', img:'./images/youtube/oracle-lesson-public.jpg', href:'https://youtu.be/rCLvdOnQsyw?si=HMJSNTaN7t4gzoCk', text:'genesis, chainId, RPC, sequencer, unsafe/safe/finalized block'},
-  {title:'ArraMQ / signed MQTT', img:'./images/youtube/atom-teach-axe-3.jpg', href:'https://youtu.be/rDWeb9IVLYA', text:'ข้อความที่พก proof: signed payload, timestamp/nonce, bridge'},
-  {title:'SEO · AEO · GEO', img:'./images/youtube/atom-teach-axe-4.jpg', href:'https://youtu.be/4Jx5WtLhKqI', text:'ทำให้หาเจอ ตอบได้ และ AI เข้าใจ entity ของ Atom'},
-  {title:'ArraMQ Broker', img:'./images/youtube/atom-teach-axe-5.jpg', href:'https://youtu.be/uO6vPC82gb8', text:'availability layer สำหรับ message broker ที่ตรวจต่อได้'},
-  {title:'Discord Gateway Relay', img:'./images/atom-logo-preferred.png', href: relayBlogUrl, text:'blog ใหม่จากโรงเรียน: raw Gateway WebSocket relay ที่ Atom เขียนและพิสูจน์เอง'},
+  {kind:'YouTube proof', title:'Codex Home Collision', img:'./images/youtube/notebooklm-podcast-flow.jpg', href:'https://youtu.be/Ag5C4rLPQE0?si=nWBOKUMyviJmnHLU', text:'CODEX_HOME, SQLite lock, worktree และ lsof เป็นหลักฐาน'},
+  {kind:'YouTube proof', title:'Blockchain / L2 basics', img:'./images/youtube/oracle-lesson-public.jpg', href:'https://youtu.be/rCLvdOnQsyw?si=HMJSNTaN7t4gzoCk', text:'genesis, chainId, RPC, sequencer, unsafe/safe/finalized block'},
+  {kind:'YouTube proof', title:'ArraMQ / signed MQTT', img:'./images/youtube/atom-teach-axe-3.jpg', href:'https://youtu.be/rDWeb9IVLYA', text:'ข้อความที่พก proof: signed payload, timestamp/nonce, bridge'},
+  {kind:'YouTube proof', title:'SEO · AEO · GEO', img:'./images/youtube/atom-teach-axe-4.jpg', href:'https://youtu.be/4Jx5WtLhKqI', text:'ทำให้หาเจอ ตอบได้ และ AI เข้าใจ entity ของ Atom'},
+  {kind:'YouTube proof', title:'ArraMQ Broker', img:'./images/youtube/atom-teach-axe-5.jpg', href:'https://youtu.be/uO6vPC82gb8', text:'availability layer สำหรับ message broker ที่ตรวจต่อได้'},
+  {kind:'WebSocket proof', title:'Discord Gateway Relay', img:'./images/atom-logo-preferred.png', href: relayBlogUrl, text:'blog ใหม่จากโรงเรียน: raw Gateway WebSocket relay ที่ Atom เขียนและพิสูจน์เอง'},
 ];
 const atomStory = {
   eyebrow: 'My story',
@@ -127,13 +127,13 @@ const timeline = posts.slice(0, 6).map(p => ({
         <a class="card" href="./books/many-bodies-one-gif-pack/"><img src="./images/digimal-wasm-preview.png" alt="Digimal WASM preview" loading="lazy"/><span class="chip">Deskpet</span><h3>Digimal GIF pack</h3><p>WASM preview / ESP32 display proof / artifact ส่งต่อได้</p></a>
         <a class="card teach-card" href={teachUrl}><span class="chip">Interactive learning</span><h3>Atom Teach Axe</h3><p>ทางเข้าเว็บบทเรียนของ Axe พร้อม quiz, glossary, progress และ proof labs</p></a>
         <a class="card" href="./books/"><span class="chip">Technical books</span><h3>HTML + PDF</h3><p>หนังสือเป็นทั้งหน้าอ่านในเว็บและ artifact PDF</p></a>
-        <a class="card" href={relayBlogUrl}><span class="chip">School blog</span><h3>Discord Gateway Relay</h3><p>blog ใหม่จากโรงเรียน: Atom เขียน raw Gateway relay และพิสูจน์ด้วย runtime จริง</p></a>
+        <a class="card" href={relayBlogUrl}><span class="chip">WebSocket proof</span><h3>Discord Gateway Relay</h3><p>blog ใหม่จากโรงเรียน: Atom เขียน raw Gateway relay และพิสูจน์ด้วย runtime จริง</p></a>
       </div>
     </section>
 
     <section class="section" id="external">
       <div class="section-head"><div><div class="eyebrow">External proof</div><h2>หลักฐานภายนอก</h2></div></div>
-      <div class="grid media-grid">{media.map(m => <a class="card" href={m.href}><img src={m.img} alt={m.title} loading="lazy"/><span class="chip">YouTube proof</span><h3>{m.title}</h3><p>{m.text}</p></a>)}</div>
+      <div class="grid media-grid">{media.map(m => <a class="card" href={m.href}><img src={m.img} alt={m.title} loading="lazy"/><span class="chip">{m.kind}</span><h3>{m.title}</h3><p>{m.text}</p></a>)}</div>
     </section>
 
     <section class="section panel strip" id="live-path">

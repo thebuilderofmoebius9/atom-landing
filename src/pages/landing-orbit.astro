@@ -8,11 +8,11 @@ const orbitTitle = 'Atom Oracle — Orbit Ledger';
 const orbitDescription = 'จักรวาลหลักฐานของ Atom Oracle: ตัวตน บทเรียน หนังสือ proof และทางเข้า Atom Teach Axe ในหน้าเดียว';
 const orbitImage = 'https://thebuilderofmoebius9.github.io/atom-landing/images/og/atom-orbit-ledger.png';
 const media = [
-  {title:'Codex Home Collision', img:'../images/youtube/notebooklm-podcast-flow.jpg', href:'https://youtu.be/Ag5C4rLPQE0?si=nWBOKUMyviJmnHLU', text:'CODEX_HOME, SQLite lock, worktree และ lsof เป็นหลักฐาน'},
-  {title:'Blockchain / L2 basics', img:'../images/youtube/oracle-lesson-public.jpg', href:'https://youtu.be/rCLvdOnQsyw?si=HMJSNTaN7t4gzoCk', text:'genesis, chainId, RPC, sequencer, unsafe/safe/finalized block'},
-  {title:'ArraMQ / signed MQTT', img:'../images/youtube/atom-teach-axe-3.jpg', href:'https://youtu.be/rDWeb9IVLYA', text:'ข้อความที่พก proof: signed payload, timestamp/nonce, bridge'},
-  {title:'SEO · AEO · GEO', img:'../images/youtube/atom-teach-axe-4.jpg', href:'https://youtu.be/4Jx5WtLhKqI', text:'ทำให้หาเจอ ตอบได้ และ AI เข้าใจ entity ของ Atom'},
-  {title:'ArraMQ Broker', img:'../images/youtube/atom-teach-axe-5.jpg', href:'https://youtu.be/uO6vPC82gb8', text:'availability layer สำหรับ message broker ที่ตรวจต่อได้'},
+  {kind:'YouTube proof', title:'Codex Home Collision', img:'../images/youtube/notebooklm-podcast-flow.jpg', href:'https://youtu.be/Ag5C4rLPQE0?si=nWBOKUMyviJmnHLU', text:'CODEX_HOME, SQLite lock, worktree และ lsof เป็นหลักฐาน'},
+  {kind:'YouTube proof', title:'Blockchain / L2 basics', img:'../images/youtube/oracle-lesson-public.jpg', href:'https://youtu.be/rCLvdOnQsyw?si=HMJSNTaN7t4gzoCk', text:'genesis, chainId, RPC, sequencer, unsafe/safe/finalized block'},
+  {kind:'YouTube proof', title:'ArraMQ / signed MQTT', img:'../images/youtube/atom-teach-axe-3.jpg', href:'https://youtu.be/rDWeb9IVLYA', text:'ข้อความที่พก proof: signed payload, timestamp/nonce, bridge'},
+  {kind:'YouTube proof', title:'SEO · AEO · GEO', img:'../images/youtube/atom-teach-axe-4.jpg', href:'https://youtu.be/4Jx5WtLhKqI', text:'ทำให้หาเจอ ตอบได้ และ AI เข้าใจ entity ของ Atom'},
+  {kind:'YouTube proof', title:'ArraMQ Broker', img:'../images/youtube/atom-teach-axe-5.jpg', href:'https://youtu.be/uO6vPC82gb8', text:'availability layer สำหรับ message broker ที่ตรวจต่อได้'},
 ];
 const atomStory = {
   eyebrow: 'My story',
@@ -153,7 +153,7 @@ const timeline = posts.slice(0, 6).map(p => ({
 
     <section class="section" id="external">
       <div class="section-head"><div><div class="eyebrow">External proof</div><h2>หลักฐานภายนอก</h2></div></div>
-      <div class="grid media-grid">{media.map(m => <a class="card" href={m.href}><img src={m.img} alt={m.title} loading="lazy"/><span class="chip">YouTube proof</span><h3>{m.title}</h3><p>{m.text}</p></a>)}</div>
+      <div class="grid media-grid">{media.map(m => <a class="card" href={m.href}><img src={m.img} alt={m.title} loading="lazy"/><span class="chip">{m.kind}</span><h3>{m.title}</h3><p>{m.text}</p></a>)}</div>
     </section>
 
     <section class="section panel strip" id="live-path">
