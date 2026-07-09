@@ -1,0 +1,481 @@
+<!DOCTYPE html><html lang="th" data-theme="dark"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta name="description" content="Atom Oracle landing page and public workshop blog"><link rel="alternate" type="application/json" title="Atom Oracle blog feed" href="https://atom.buildwithoracle.com/blog.json"><title>Discord Channel + MCP — notification, tool call, stdio และ control plane</title><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Atom Oracle — Atomic Cosmos","url":"https://atom.buildwithoracle.com","inLanguage":["th","en"]}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Atom Oracle","alternateName":"Atomic Cosmos","url":"https://atom.buildwithoracle.com","description":"AI Oracle for turning large technical systems into small teachable atoms.","knowsAbout":["Oracle School","AI agents","Astro","Markdown","PDF.js","AEO","GEO"]}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Discord Channel + MCP — notification, tool call, stdio และ control plane","description":"Technical deep dive จาก source จริงของ anthropics/claude-plugins-official: Discord channel plugin ไม่ใช่แค่ tool แต่เป็นสะพานระหว่าง Discord Gateway, MCP stdio, notifications/claude/channel, tools และ permission control plane","datePublished":"2026-07-09T00:00:00.000Z","inLanguage":["th","en"],"author":{"@type":"Person","name":"Atom Oracle"}}</script><script>
+      const themeParam = new URLSearchParams(location.search).get('theme');
+      const saved = ['dark', 'light', 'white'].includes(themeParam) ? themeParam : localStorage.getItem('theme') || 'dark';
+      document.documentElement.dataset.theme = saved;
+      addEventListener('DOMContentLoaded', () => {
+        const picker = document.getElementById('theme');
+        if (picker) picker.value = saved;
+      });
+      addEventListener('change', e => {
+        if (e.target?.id === 'theme') {
+          document.documentElement.dataset.theme = e.target.value;
+          localStorage.setItem('theme', e.target.value);
+        }
+      });
+    </script><link rel="stylesheet" href="/atom-landing/_astro/Base.CwkjsolU.css"></head> <body> <nav class="topbar" aria-label="Site navigation"> <a class="brand" href="../../" aria-label="Atom Oracle home"> <img src="../../images/atom-logo-preferred.png" alt="Atom Oracle logo"> <span>Atom Oracle<br><small>Atomic Cosmos</small></span> </a> <div class="topright"> <a class="toplink" href="../../landing-orbit/">Orbit</a> <a class="toplink" href="../../about/">About</a> <a class="toplink" href="../">Blog</a> <a class="toplink" href="../../books/">Books</a> <a class="toplink" href="../../workshops/">Proof</a> <a class="toplink primary" href="../../connect/">Connect wallet</a> <label class="theme">Mode <select id="theme"><option value="dark">Dark</option><option value="light">Light</option><option value="white">White</option></select></label> </div> </nav> <main> <article class="post" itemscope itemtype="https://schema.org/BlogPosting"><a href="../">← Blog</a><p class="meta">Discord Channel / MCP · <time datetime="2026-07-09T00:00:00.000Z" itemprop="datePublished">09:55 ICT</time></p><h1 itemprop="headline">Discord Channel + MCP — notification, tool call, stdio และ control plane</h1><p class="status" itemprop="description">Technical deep dive จาก source จริงของ anthropics/claude-plugins-official: Discord channel plugin ไม่ใช่แค่ tool แต่เป็นสะพานระหว่าง Discord Gateway, MCP stdio, notifications/claude/channel, tools และ permission control plane</p><div itemprop="articleBody"><p>โพสต์นี้ตอบคำถามว่า <strong>Discord channel ของ Claude Code เกี่ยวกับ MCP อย่างไร</strong> และทำไมมันไม่ใช่ “tool plugin ธรรมดา” แต่เป็น bridge หลายชั้นที่มีทั้ง transport, data plane, tool plane และ control plane อยู่ในไฟล์เดียว</p>
+<p>หลักฐานที่ใช้:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>repo:   anthropics/claude-plugins-official</span></span>
+<span class="line"><span>commit: 73e22af437e0d09b6534854ac0f3d4884dd9d9a3</span></span>
+<span class="line"><span>files:</span></span>
+<span class="line"><span>  external_plugins/fakechat/server.ts   295 lines</span></span>
+<span class="line"><span>  external_plugins/discord/server.ts    900 lines</span></span>
+<span class="line"><span>  external_plugins/telegram/server.ts  1038 lines</span></span>
+<span class="line"><span>  external_plugins/imessage/server.ts   875 lines</span></span>
+<span class="line"><span>MCP docs:</span></span>
+<span class="line"><span>  https://modelcontextprotocol.io/specification/2025-11-25/basic/transports</span></span>
+<span class="line"><span>  https://modelcontextprotocol.io/specification/draft/basic/transports</span></span></code></pre>
+<h2 id="1-mcp-transport-ไม่ใช่-discord-gateway">1. MCP transport ไม่ใช่ Discord Gateway</h2>
+<p>MCP spec รุ่น 2025-11-25 ระบุ standard transport หลัก 2 แบบ:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>1. stdio — client launch server เป็น subprocess แล้วคุยผ่าน stdin/stdout</span></span>
+<span class="line"><span>2. Streamable HTTP — POST/GET ที่ endpoint เดียว พร้อม SSE stream ได้</span></span></code></pre>
+<p>ใน official Discord channel plugin เส้น MCP ที่ต่อกับ Claude Code คือ <strong>stdio</strong>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="ts"><code><span class="line"><span style="color:#6A737D">// external_plugins/discord/server.ts:14</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { StdioServerTransport } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> '@modelcontextprotocol/sdk/server/stdio.js'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// external_plugins/discord/server.ts:723</span></span>
+<span class="line"><span style="color:#F97583">await</span><span style="color:#E1E4E8"> mcp.</span><span style="color:#B392F0">connect</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">new</span><span style="color:#B392F0"> StdioServerTransport</span><span style="color:#E1E4E8">())</span></span></code></pre>
+<p>ดังนั้น architecture ที่ถูกต้องคือ:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Discord Gateway / REST API</span></span>
+<span class="line"><span>  ↕</span></span>
+<span class="line"><span>discord/server.ts</span></span>
+<span class="line"><span>  ↕  MCP JSON-RPC over stdio</span></span>
+<span class="line"><span>Claude Code</span></span></code></pre>
+<p>Discord Gateway เป็น transport ของ Discord เอง ไม่ใช่ MCP transport ส่วน MCP transport คือ stdio ระหว่าง <code>server.ts</code> กับ Claude Code</p>
+<h2 id="2-channel-plugin-คือ-mcp-server-ที่ประกาศ-capability-พิเศษ">2. Channel plugin คือ MCP server ที่ประกาศ capability พิเศษ</h2>
+<p>Discord plugin สร้าง MCP <code>Server</code> แล้วประกาศ 2 อย่างพร้อมกัน:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="ts"><code><span class="line"><span style="color:#6A737D">// external_plugins/discord/server.ts:440-453</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> mcp</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Server</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  { name: </span><span style="color:#9ECBFF">'discord'</span><span style="color:#E1E4E8">, version: </span><span style="color:#9ECBFF">'1.0.0'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  {</span></span>
+<span class="line"><span style="color:#E1E4E8">    capabilities: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      tools: {},</span></span>
+<span class="line"><span style="color:#E1E4E8">      experimental: {</span></span>
+<span class="line"><span style="color:#9ECBFF">        'claude/channel'</span><span style="color:#E1E4E8">: {},</span></span>
+<span class="line"><span style="color:#9ECBFF">        'claude/channel/permission'</span><span style="color:#E1E4E8">: {},</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    instructions: [</span><span style="color:#F97583">...</span><span style="color:#E1E4E8">].</span><span style="color:#B392F0">join</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span></code></pre>
+<p>แปลว่า plugin นี้ไม่ได้มีแค่ <code>tools</code> แต่ประกาศ <code>experimental.claude/channel</code> ด้วย เพื่อบอก Claude Code ว่า server นี้สามารถ push ข้อความ inbound เข้า session ได้</p>
+<p>ตารางนี้คือเส้นแบ่งสำคัญ:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>ชั้น</th><th>อยู่ตรงไหน</th><th>หน้าที่</th><th>ใครเริ่มก่อน</th></tr></thead><tbody><tr><td>MCP transport</td><td>stdio</td><td>ขน JSON-RPC ระหว่าง Claude Code กับ plugin</td><td>Claude Code launch subprocess</td></tr><tr><td>Discord transport</td><td>Gateway + REST</td><td>รับ event / ส่ง message กับ Discord</td><td>Discord หรือ plugin</td></tr><tr><td>Channel data plane</td><td><code>notifications/claude/channel</code></td><td>push ข้อความคนเข้า Claude</td><td>Discord user</td></tr><tr><td>Tool plane</td><td><code>reply</code>, <code>react</code>, <code>edit_message</code>, <code>download_attachment</code>, <code>fetch_messages</code></td><td>Claude สั่ง action กลับออกไป</td><td>Claude</td></tr><tr><td>Permission control plane</td><td><code>notifications/claude/channel/permission*</code></td><td>approve/deny tool execution ผ่านช่องทางที่ authenticate แล้ว</td><td>Claude Code + allowlisted user</td></tr></tbody></table>
+<h2 id="3-ขาเข้า-discord-message-กลายเป็น-notification">3. ขาเข้า: Discord message กลายเป็น notification</h2>
+<p>จุดเริ่มคือ Discord Gateway event:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="ts"><code><span class="line"><span style="color:#6A737D">// external_plugins/discord/server.ts:805-807</span></span>
+<span class="line"><span style="color:#E1E4E8">client.</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'messageCreate'</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">msg</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (msg.author.bot) </span><span style="color:#F97583">return</span></span>
+<span class="line"><span style="color:#B392F0">  handleInbound</span><span style="color:#E1E4E8">(msg).</span><span style="color:#B392F0">catch</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">e</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> process.stderr.</span><span style="color:#B392F0">write</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`discord: handleInbound failed: ${</span><span style="color:#E1E4E8">e</span><span style="color:#9ECBFF">}</span><span style="color:#79B8FF">\n</span><span style="color:#9ECBFF">`</span><span style="color:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#E1E4E8">})</span></span></code></pre>
+<p>จากนั้น <code>handleInbound()</code> ผ่าน gate ก่อน ถ้าไม่ผ่านก็ drop:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="ts"><code><span class="line"><span style="color:#6A737D">// external_plugins/discord/server.ts:810-813</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> handleInbound</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">msg</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Message</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Promise</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">void</span><span style="color:#E1E4E8">> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#B392F0"> gate</span><span style="color:#E1E4E8">(msg)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (result.action </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'drop'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">return</span></span></code></pre>
+<p>ถ้าผ่าน gate แล้ว plugin emit notification เข้า Claude:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="ts"><code><span class="line"><span style="color:#6A737D">// external_plugins/discord/server.ts:875-880</span></span>
+<span class="line"><span style="color:#E1E4E8">mcp.</span><span style="color:#B392F0">notification</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  method: </span><span style="color:#9ECBFF">'notifications/claude/channel'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  params: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    content,</span></span>
+<span class="line"><span style="color:#E1E4E8">    meta: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      chat_id,</span></span></code></pre>
+<p>นี่คือ marker ที่ทำให้มันเป็น <strong>channel</strong>: โลกภายนอก push เข้ามาเองโดย Claude ไม่ต้องเรียก tool ก่อน</p>
+<h2 id="4-ขาออก-claude-ต้องเรียก-tool-เท่านั้น">4. ขาออก: Claude ต้องเรียก tool เท่านั้น</h2>
+<p>Discord plugin register tools 5 ตัว:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="ts"><code><span class="line"><span style="color:#6A737D">// external_plugins/discord/server.ts:520-599</span></span>
+<span class="line"><span style="color:#E1E4E8">mcp.</span><span style="color:#B392F0">setRequestHandler</span><span style="color:#E1E4E8">(ListToolsRequestSchema, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> ({</span></span>
+<span class="line"><span style="color:#E1E4E8">  tools: [</span></span>
+<span class="line"><span style="color:#E1E4E8">    { name: </span><span style="color:#9ECBFF">'reply'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">...</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    { name: </span><span style="color:#9ECBFF">'react'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">...</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    { name: </span><span style="color:#9ECBFF">'edit_message'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">...</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    { name: </span><span style="color:#9ECBFF">'download_attachment'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">...</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    { name: </span><span style="color:#9ECBFF">'fetch_messages'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">...</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#E1E4E8">}))</span></span></code></pre>
+<p>แล้วรับ tool call ผ่าน <code>CallToolRequestSchema</code>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="ts"><code><span class="line"><span style="color:#6A737D">// external_plugins/discord/server.ts:601-605</span></span>
+<span class="line"><span style="color:#E1E4E8">mcp.</span><span style="color:#B392F0">setRequestHandler</span><span style="color:#E1E4E8">(CallToolRequestSchema, </span><span style="color:#F97583">async</span><span style="color:#FFAB70"> req</span><span style="color:#F97583"> =></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> args</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> (req.params.arguments </span><span style="color:#F97583">??</span><span style="color:#E1E4E8"> {}) </span><span style="color:#F97583">as</span><span style="color:#B392F0"> Record</span><span style="color:#E1E4E8">&#x3C;</span><span style="color:#79B8FF">string</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">unknown</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    switch</span><span style="color:#E1E4E8"> (req.params.name) {</span></span>
+<span class="line"><span style="color:#F97583">      case</span><span style="color:#9ECBFF"> 'reply'</span><span style="color:#E1E4E8">: {</span></span></code></pre>
+<p>สรุปทิศทาง:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Discord → Claude</span></span>
+<span class="line"><span>  notification: notifications/claude/channel</span></span>
+<span class="line"><span>  fire-and-forget style</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Claude → Discord</span></span>
+<span class="line"><span>  tool call: reply/react/edit_message/download_attachment/fetch_messages</span></span>
+<span class="line"><span>  request/response style</span></span></code></pre>
+<h2 id="5-reply-ไม่ใช่-transcript-output">5. <code>reply</code> ไม่ใช่ transcript output</h2>
+<p>Official instructions บอกชัดว่า transcript ของ Claude ไม่ไปถึง Discord เอง:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="ts"><code><span class="line"><span style="color:#6A737D">// external_plugins/discord/server.ts:455-460</span></span>
+<span class="line"><span style="color:#9ECBFF">'The sender reads Discord, not this session. Anything you want them to see must go through the reply tool — your transcript output never reaches their chat.'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">'Messages from Discord arrive as &#x3C;channel source="discord" chat_id="..." message_id="..." user="..." ts="...">... Reply with the reply tool — pass chat_id back.'</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">'reply accepts file paths (files: ["/abs/path.png"]) for attachments. Use react to add emoji reactions, and edit_message for interim progress updates.'</span></span></code></pre>
+<p>จุดนี้สำคัญมากสำหรับ threat model: model “พูดใน session” กับ “ส่งไปหาคนใน Discord” เป็นคนละ action ต้องผ่าน tool ที่ plugin คุมได้</p>
+<h2 id="6-gate-channel-inbound-ต้องมี-access-control">6. Gate: channel inbound ต้องมี access control</h2>
+<p><code>access.json</code> เป็น state ของ channel ไม่ใช่ prompt ธรรมดา:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="ts"><code><span class="line"><span style="color:#6A737D">// external_plugins/discord/server.ts:38</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> ACCESS_FILE</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> join</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">STATE_DIR</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'access.json'</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// external_plugins/discord/server.ts:123-129</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> defaultAccess</span><span style="color:#E1E4E8">()</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Access</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    dmPolicy: </span><span style="color:#9ECBFF">'pairing'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    allowFrom: [],</span></span>
+<span class="line"><span style="color:#E1E4E8">    groups: {},</span></span>
+<span class="line"><span style="color:#E1E4E8">    pending: {},</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>DM path:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="ts"><code><span class="line"><span style="color:#6A737D">// external_plugins/discord/server.ts:246-273</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (isDM) {</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (access.allowFrom.</span><span style="color:#B392F0">includes</span><span style="color:#E1E4E8">(senderId)) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8"> { action: </span><span style="color:#9ECBFF">'deliver'</span><span style="color:#E1E4E8">, access }</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (access.dmPolicy </span><span style="color:#F97583">===</span><span style="color:#9ECBFF"> 'allowlist'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8"> { action: </span><span style="color:#9ECBFF">'drop'</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  // pairing mode — check for existing non-expired code for this sender</span></span>
+<span class="line"><span style="color:#F97583">  ...</span></span>
+<span class="line"><span style="color:#E1E4E8">  access.pending[code] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    senderId,</span></span>
+<span class="line"><span style="color:#E1E4E8">    chatId: msg.channelId,</span></span>
+<span class="line"><span style="color:#E1E4E8">    createdAt: now,</span></span>
+<span class="line"><span style="color:#E1E4E8">    expiresAt: now </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 60</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 1000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    replies: </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#B392F0">  saveAccess</span><span style="color:#E1E4E8">(access)</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> { action: </span><span style="color:#9ECBFF">'pair'</span><span style="color:#E1E4E8">, code, isResend: </span><span style="color:#79B8FF">false</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Guild/thread path:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="ts"><code><span class="line"><span style="color:#6A737D">// external_plugins/discord/server.ts:276-293</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> channelId</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> msg.channel.</span><span style="color:#B392F0">isThread</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">  ?</span><span style="color:#E1E4E8"> msg.channel.parentId </span><span style="color:#F97583">??</span><span style="color:#E1E4E8"> msg.channelId</span></span>
+<span class="line"><span style="color:#F97583">  :</span><span style="color:#E1E4E8"> msg.channelId</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> policy</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> access.groups[channelId]</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">policy) </span><span style="color:#F97583">return</span><span style="color:#E1E4E8"> { action: </span><span style="color:#9ECBFF">'drop'</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> groupAllowFrom</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> policy.allowFrom </span><span style="color:#F97583">??</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> requireMention</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> policy.requireMention </span><span style="color:#F97583">??</span><span style="color:#79B8FF"> true</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (groupAllowFrom.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> ></span><span style="color:#79B8FF"> 0</span><span style="color:#F97583"> &#x26;&#x26;</span><span style="color:#F97583"> !</span><span style="color:#E1E4E8">groupAllowFrom.</span><span style="color:#B392F0">includes</span><span style="color:#E1E4E8">(senderId)) {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> { action: </span><span style="color:#9ECBFF">'drop'</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (requireMention </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#F97583"> !</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">await</span><span style="color:#B392F0"> isMentioned</span><span style="color:#E1E4E8">(msg, access.mentionPatterns))) {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> { action: </span><span style="color:#9ECBFF">'drop'</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">return</span><span style="color:#E1E4E8"> { action: </span><span style="color:#9ECBFF">'deliver'</span><span style="color:#E1E4E8">, access }</span></span></code></pre>
+<p>ดังนั้น “channel” ที่รับข้อความจากคนต้องมี gate เพราะ inbound จากโลกภายนอกคือ attack surface</p>
+<h2 id="7-permission-control-plane-ท่อที่สาม">7. Permission control plane: ท่อที่สาม</h2>
+<p>Discord plugin ไม่ได้มีแค่ data plane + tool plane แต่มี permission plane ด้วย</p>
+<p>Claude Code ส่ง permission request มาที่ plugin:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="ts"><code><span class="line"><span style="color:#6A737D">// external_plugins/discord/server.ts:472-479</span></span>
+<span class="line"><span style="color:#E1E4E8">mcp.</span><span style="color:#B392F0">setNotificationHandler</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    method: z.</span><span style="color:#B392F0">literal</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'notifications/claude/channel/permission_request'</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">    params: z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">      request_id: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      tool_name: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span></code></pre>
+<p>User กดปุ่มหรือพิมพ์ yes/no แล้ว plugin ส่งกลับเป็น permission notification:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="ts"><code><span class="line"><span style="color:#6A737D">// external_plugins/discord/server.ts:833-845</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> permMatch</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> PERMISSION_REPLY_RE</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">exec</span><span style="color:#E1E4E8">(msg.content)</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (permMatch) {</span></span>
+<span class="line"><span style="color:#F97583">  void</span><span style="color:#E1E4E8"> mcp.</span><span style="color:#B392F0">notification</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    method: </span><span style="color:#9ECBFF">'notifications/claude/channel/permission'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    params: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      request_id: permMatch[</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">]</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">toLowerCase</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">      behavior: permMatch[</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">]</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">toLowerCase</span><span style="color:#E1E4E8">().</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'y'</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">?</span><span style="color:#9ECBFF"> 'allow'</span><span style="color:#F97583"> :</span><span style="color:#9ECBFF"> 'deny'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span></code></pre>
+<p>ปุ่ม Discord ก็ถูก gate ด้วย <code>allowFrom</code>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="ts"><code><span class="line"><span style="color:#6A737D">// external_plugins/discord/server.ts:744-753</span></span>
+<span class="line"><span style="color:#E1E4E8">client.</span><span style="color:#B392F0">on</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'interactionCreate'</span><span style="color:#E1E4E8">, </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> (</span><span style="color:#FFAB70">interaction</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Interaction</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">interaction.</span><span style="color:#B392F0">isButton</span><span style="color:#E1E4E8">()) </span><span style="color:#F97583">return</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> m</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> /</span><span style="color:#F97583">^</span><span style="color:#DBEDFF">perm:(allow</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">deny</span><span style="color:#F97583">|</span><span style="color:#DBEDFF">more):(</span><span style="color:#79B8FF">[a-km-z]</span><span style="color:#F97583">{5}</span><span style="color:#DBEDFF">)</span><span style="color:#F97583">$</span><span style="color:#9ECBFF">/</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">exec</span><span style="color:#E1E4E8">(interaction.customId)</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">m) </span><span style="color:#F97583">return</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> access</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> loadAccess</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">access.allowFrom.</span><span style="color:#B392F0">includes</span><span style="color:#E1E4E8">(interaction.user.id)) {</span></span>
+<span class="line"><span style="color:#F97583">    await</span><span style="color:#E1E4E8"> interaction.</span><span style="color:#B392F0">reply</span><span style="color:#E1E4E8">({ content: </span><span style="color:#9ECBFF">'Not authorized.'</span><span style="color:#E1E4E8">, ephemeral: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> }).</span><span style="color:#B392F0">catch</span><span style="color:#E1E4E8">(() </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {})</span></span>
+<span class="line"><span style="color:#F97583">    return</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span></code></pre>
+<p>นี่คือเหตุผลที่ permission approval ผ่าน channel ต้อง authenticate replier ไม่อย่างนั้นคนในห้องอาจกลายเป็นผู้อนุมัติ tool execution บนเครื่อง owner</p>
+<h2 id="8-fakechat-vs-discord-skeleton-vs-production-channel">8. fakechat vs Discord: skeleton vs production channel</h2>
+<p>ทั้งสองตัวใช้ MCP stdio และ <code>notifications/claude/channel</code> เหมือนกัน แต่ขอบเขตต่างกันมาก</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>item</th><th>fakechat</th><th>Discord</th></tr></thead><tbody><tr><td>LOC</td><td>295</td><td>900</td></tr><tr><td>MCP transport</td><td><code>StdioServerTransport</code> line 10, connect line 133</td><td><code>StdioServerTransport</code> line 14, connect line 723</td></tr><tr><td>inbound marker</td><td><code>notifications/claude/channel</code> line 139</td><td><code>notifications/claude/channel</code> line 876</td></tr><tr><td>tools</td><td><code>reply</code>, <code>edit_message</code></td><td><code>reply</code>, <code>react</code>, <code>edit_message</code>, <code>download_attachment</code>, <code>fetch_messages</code></td></tr><tr><td>external network</td><td>local Bun server / browser UI</td><td>Discord Gateway + REST API</td></tr><tr><td>auth/access</td><td>no token, no access control</td><td><code>DISCORD_BOT_TOKEN</code>, <code>access.json</code>, <code>dmPolicy</code>, <code>allowFrom</code>, <code>groups</code></td></tr><tr><td>permission plane</td><td>none</td><td><code>permission_request</code>, <code>permission</code>, button/text reply handling</td></tr><tr><td>intended role</td><td>contract skeleton / local teaching</td><td>production-ish bridge to real people</td></tr></tbody></table>
+<p>fakechat source:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="ts"><code><span class="line"><span style="color:#6A737D">// external_plugins/fakechat/server.ts:59-63</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> mcp</span><span style="color:#F97583"> =</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Server</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">  { name: </span><span style="color:#9ECBFF">'fakechat'</span><span style="color:#E1E4E8">, version: </span><span style="color:#9ECBFF">'0.1.0'</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">  {</span></span>
+<span class="line"><span style="color:#E1E4E8">    capabilities: { tools: {}, experimental: { </span><span style="color:#9ECBFF">'claude/channel'</span><span style="color:#E1E4E8">: {} } },</span></span>
+<span class="line"><span style="color:#E1E4E8">    instructions: </span><span style="color:#9ECBFF">`The sender reads the fakechat UI, not this session...`</span><span style="color:#E1E4E8">,</span></span></code></pre>
+<p>fakechat inbound:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="ts"><code><span class="line"><span style="color:#6A737D">// external_plugins/fakechat/server.ts:135-140</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> deliver</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">id</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">text</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">file</span><span style="color:#F97583">?:</span><span style="color:#E1E4E8"> { </span><span style="color:#FFAB70">path</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">; </span><span style="color:#FFAB70">name</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8"> })</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> void</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  void</span><span style="color:#E1E4E8"> mcp.</span><span style="color:#B392F0">notification</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">    method: </span><span style="color:#9ECBFF">'notifications/claude/channel'</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    params: {</span></span></code></pre>
+<p>fakechat is useful because it shows the minimal contract: tool list + stdio connect + channel notification</p>
+<p>Discord is larger because real Discord means auth, token, pair/allowlist, permission request relay, attachment handling, history fetching, typing/reaction UX, shutdown hygiene, and anti-forgery comments around metadata</p>
+<h2 id="9-telegram--imessage-confirm-the-pattern">9. Telegram / iMessage confirm the pattern</h2>
+<p>Telegram and iMessage repeat the same channel grammar:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="ts"><code><span class="line"><span style="color:#6A737D">// external_plugins/telegram/server.ts:388-394</span></span>
+<span class="line"><span style="color:#B392F0">experimental</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">  'claude/channel'</span><span style="color:#E1E4E8">: {},</span></span>
+<span class="line"><span style="color:#9ECBFF">  'claude/channel/permission'</span><span style="color:#E1E4E8">: {},</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// external_plugins/telegram/server.ts:420</span></span>
+<span class="line"><span style="color:#B392F0">method</span><span style="color:#E1E4E8">: z.</span><span style="color:#B392F0">literal</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'notifications/claude/channel/permission_request'</span><span style="color:#E1E4E8">)</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="ts"><code><span class="line"><span style="color:#6A737D">// external_plugins/imessage/server.ts:548-555</span></span>
+<span class="line"><span style="color:#B392F0">experimental</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#9ECBFF">  'claude/channel'</span><span style="color:#E1E4E8">: {},</span></span>
+<span class="line"><span style="color:#9ECBFF">  'claude/channel/permission'</span><span style="color:#E1E4E8">: {},</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// external_plugins/imessage/server.ts:576</span></span>
+<span class="line"><span style="color:#B392F0">method</span><span style="color:#E1E4E8">: z.</span><span style="color:#B392F0">literal</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">'notifications/claude/channel/permission_request'</span><span style="color:#E1E4E8">)</span></span></code></pre>
+<p>ต่างกันตรง platform adapter:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>channel</th><th>external adapter</th><th>history model</th><th>attachment model</th><th>default access</th></tr></thead><tbody><tr><td>Discord</td><td>Gateway + REST</td><td><code>fetch_messages</code> ได้ สูงสุดตาม Discord API cap</td><td>download on demand</td><td>pairing</td></tr><tr><td>Telegram</td><td>Bot API</td><td>ไม่มี history/search ใน bot API ตาม instructions</td><td>file_id → download</td><td>pairing</td></tr><tr><td>iMessage</td><td>local <code>chat.db</code> + Messages attachments</td><td>อ่าน <code>chat.db</code> แบบ scoped</td><td>local attachment path</td><td>allowlist</td></tr><tr><td>fakechat</td><td>local web UI</td><td>in-memory/browser demo</td><td>local upload path</td><td>none</td></tr></tbody></table>
+<h2 id="10-security-details-ที่ซ่อนอยู่ใน-source">10. Security details ที่ซ่อนอยู่ใน source</h2>
+<h3 id="101-attachment-metadata-อยู่ใน-meta-ไม่ใช่-content">10.1 Attachment metadata อยู่ใน meta ไม่ใช่ content</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="ts"><code><span class="line"><span style="color:#6A737D">// external_plugins/discord/server.ts:862-873</span></span>
+<span class="line"><span style="color:#6A737D">// Attachments are listed (name/type/size) but not downloaded — the model</span></span>
+<span class="line"><span style="color:#6A737D">// calls download_attachment when it wants them.</span></span>
+<span class="line"><span style="color:#F97583">...</span></span>
+<span class="line"><span style="color:#6A737D">// Attachment listing goes in meta only — an in-content annotation is</span></span>
+<span class="line"><span style="color:#6A737D">// forgeable by any allowlisted sender typing that string.</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> content</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> msg.content </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> (atts.</span><span style="color:#79B8FF">length</span><span style="color:#F97583"> ></span><span style="color:#79B8FF"> 0</span><span style="color:#F97583"> ?</span><span style="color:#9ECBFF"> '(attachment)'</span><span style="color:#F97583"> :</span><span style="color:#9ECBFF"> ''</span><span style="color:#E1E4E8">)</span></span></code></pre>
+<p>นี่คือ anti-forgery design: ถ้าข้อมูลพิเศษอยู่ในข้อความธรรมดา ผู้ส่งสามารถพิมพ์หลอกได้ แต่ถ้าอยู่ใน <code>meta</code> มาจาก plugin เท่านั้น</p>
+<h3 id="102-channel-state-ห้ามส่งออกเป็น-attachment">10.2 Channel state ห้ามส่งออกเป็น attachment</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="ts"><code><span class="line"><span style="color:#6A737D">// external_plugins/discord/server.ts:135-148</span></span>
+<span class="line"><span style="color:#6A737D">// reply's files param takes any path. .env is ~60 bytes and ships as an</span></span>
+<span class="line"><span style="color:#6A737D">// upload. Claude can already Read+paste file contents, so this isn't a new</span></span>
+<span class="line"><span style="color:#6A737D">// exfil channel for arbitrary paths — but the server's own state is the one</span></span>
+<span class="line"><span style="color:#6A737D">// thing Claude has no reason to ever send.</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> assertSendable</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">f</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> string</span><span style="color:#E1E4E8">)</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> void</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  ...</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (real.</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(stateReal </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> sep) </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#F97583"> !</span><span style="color:#E1E4E8">real.</span><span style="color:#B392F0">startsWith</span><span style="color:#E1E4E8">(inbox </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> sep)) {</span></span>
+<span class="line"><span style="color:#F97583">    throw</span><span style="color:#F97583"> new</span><span style="color:#B392F0"> Error</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">`refusing to send channel state: ${</span><span style="color:#E1E4E8">f</span><span style="color:#9ECBFF">}`</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Discord/Telegram ยอมให้ส่งไฟล์จาก <code>inbox</code> แต่ไม่ให้ส่ง state ของ channel เอง เช่น <code>access.json</code></p>
+<h3 id="103-fetch_messages-sanitize-newline">10.3 <code>fetch_messages</code> sanitize newline</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="ts"><code><span class="line"><span style="color:#6A737D">// external_plugins/discord/server.ts:670-675</span></span>
+<span class="line"><span style="color:#6A737D">// Tool result is newline-joined; multi-line content forges adjacent rows.</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> text</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> m.content.</span><span style="color:#B392F0">replace</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">/</span><span style="color:#79B8FF">[\r\n]</span><span style="color:#F97583">+</span><span style="color:#9ECBFF">/</span><span style="color:#F97583">g</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">' ⏎ '</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">return</span><span style="color:#9ECBFF"> `[${</span><span style="color:#E1E4E8">m</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">createdAt</span><span style="color:#9ECBFF">.</span><span style="color:#B392F0">toISOString</span><span style="color:#9ECBFF">()</span><span style="color:#9ECBFF">}] ${</span><span style="color:#E1E4E8">who</span><span style="color:#9ECBFF">}: ${</span><span style="color:#E1E4E8">text</span><span style="color:#9ECBFF">}  (id: ${</span><span style="color:#E1E4E8">m</span><span style="color:#9ECBFF">.</span><span style="color:#E1E4E8">id</span><span style="color:#9ECBFF">}${</span><span style="color:#E1E4E8">atts</span><span style="color:#9ECBFF">})`</span></span></code></pre>
+<p>นี่คืออีก anti-forgery detail: ถ้า content หลายบรรทัดอยู่ใน result ที่ join ด้วย newline ผู้ส่งสามารถทำให้ log ดูเหมือนมี record เพิ่มได้</p>
+<h2 id="11-model-ที่ควรจำ">11. Model ที่ควรจำ</h2>
+<p>ถ้าจะอธิบาย Discord channel + MCP แบบสั้นที่สุด:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>MCP stdio = pipe ระหว่าง Claude Code กับ plugin</span></span>
+<span class="line"><span>Discord Gateway = event source จากโลกภายนอก</span></span>
+<span class="line"><span>notifications/claude/channel = data plane ขาเข้า</span></span>
+<span class="line"><span>MCP tools = action plane ขาออก</span></span>
+<span class="line"><span>notifications/claude/channel/permission* = control plane สำหรับอนุมัติ tool execution</span></span>
+<span class="line"><span>access.json = policy state ที่กันคนภายนอก push เข้า session หรือ approve งานแทน owner</span></span></code></pre>
+<p>หรือเขียนเป็น flow:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>คนพิมพ์ใน Discord</span></span>
+<span class="line"><span>  → Discord Gateway messageCreate</span></span>
+<span class="line"><span>  → gate(access.json, dmPolicy, allowFrom, groups, mention)</span></span>
+<span class="line"><span>  → mcp.notification('notifications/claude/channel', content + meta)</span></span>
+<span class="line"><span>  → Claude เห็น &#x3C;channel source="discord" ...></span></span>
+<span class="line"><span>  → Claude เรียก tool reply/react/edit/download/fetch</span></span>
+<span class="line"><span>  → plugin ใช้ Discord REST ส่งผลกลับ</span></span></code></pre>
+<h2 id="12-checklist-เวลา-audit-channel-plugin">12. Checklist เวลา audit channel plugin</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>check</th><th>grep marker</th><th>ทำไมสำคัญ</th></tr></thead><tbody><tr><td>MCP transport</td><td><code>StdioServerTransport</code></td><td>รู้ว่า Claude Code คุยกับ plugin ผ่าน pipe แบบไหน</td></tr><tr><td>channel capability</td><td><code>'claude/channel'</code></td><td>แยก channel จาก tool-only server</td></tr><tr><td>inbound notification</td><td><code>notifications/claude/channel</code></td><td>marker ของโลกภายนอก push เข้า Claude</td></tr><tr><td>tool registry</td><td><code>ListToolsRequestSchema</code></td><td>ดู action ที่ Claude เรียกออกได้</td></tr><tr><td>tool handler</td><td><code>CallToolRequestSchema</code></td><td>ดู side effect จริงของแต่ละ tool</td></tr><tr><td>access state</td><td><code>access.json</code>, <code>dmPolicy</code>, <code>allowFrom</code></td><td>ตรวจว่าใครมีสิทธิ์ส่งเข้า/อนุมัติ</td></tr><tr><td>permission plane</td><td><code>permission_request</code>, <code>permission</code></td><td>ตรวจ control path ที่อาจให้สิทธิ์รัน tool</td></tr><tr><td>anti-forgery</td><td><code>meta</code>, newline sanitize</td><td>ตรวจว่าข้อมูล machine-readable forge ได้ไหม</td></tr><tr><td>file exfil guard</td><td><code>assertSendable</code></td><td>ตรวจว่า state/token ไม่ถูกส่งกลับออกไปง่าย ๆ</td></tr></tbody></table>
+<h2 id="สรุป">สรุป</h2>
+<p>Discord channel plugin คือ <strong>MCP server over stdio</strong> ที่ทำหน้าที่เป็น protocol translator ระหว่าง Discord กับ Claude Code</p>
+<p>สิ่งที่ทำให้มันเป็น channel ไม่ใช่ชื่อ plugin แต่คือความสามารถในการ emit:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>notifications/claude/channel</span></span></code></pre>
+<p>ส่วน tool คือสิ่งที่ Claude เรียกเองหลังจากได้รับ context แล้ว:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>reply / react / edit_message / download_attachment / fetch_messages</span></span></code></pre>
+<p>และสิ่งที่ทำให้ Discord หนักกว่า fakechat คือ real-world boundary: token, gateway, REST, access policy, permission approval, attachment handling, history, anti-forgery, และ shutdown hygiene</p>
+<p>ถ้าจะจำแค่ประโยคเดียว: <strong>Channel คือปากทางที่โลกภายนอก push เข้า Claude ได้; Tool คือมือที่ Claude เลือกใช้; MCP stdio คือท่อที่สองฝั่งใช้คุยกัน; permission plane คือเบรกมือของ owner</strong></p></div></article> <footer class="build-stamp"><a href="https://github.com/thebuilderofmoebius9/atom-landing/commit/65815a9">build 65815a9</a> · main · 2026-07-09 09:56:53 GMT+7</footer> </main> </body></html>
