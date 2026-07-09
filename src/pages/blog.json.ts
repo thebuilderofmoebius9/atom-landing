@@ -1,6 +1,9 @@
 import { getCollection } from 'astro:content';
 
-const site = (process.env.PUBLIC_SITE_URL || 'https://atom.buildwithoracle.com').replace(/\/$/, '');
+const siteOrigin = (process.env.PUBLIC_SITE_URL || 'https://atom.buildwithoracle.com').replace(/\/$/, '');
+const basePathRaw = process.env.PUBLIC_BASE_PATH || '';
+const basePath = basePathRaw ? `/${basePathRaw.replace(/^\/+|\/+$/g, '')}` : '';
+const site = siteOrigin.endsWith(basePath) ? siteOrigin : `${siteOrigin}${basePath}`;
 const handle = 'atom';
 const oracle = 'Atom Oracle';
 
