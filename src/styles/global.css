@@ -13,3 +13,9 @@
 
 /* Visual QA: code panels stay dark in every theme, so force readable ink. */
 .post pre,.prose pre,.book-body pre{color:#eaf6ff}.post pre code,.prose pre code,.book-body pre code{color:inherit}.post pre a,.prose pre a,.book-body pre a{color:#93f3ff}
+
+/* Technical-blog tables: real borders for dense comparisons. */
+.post table,.prose table,.book-body table{border-collapse:collapse;border-spacing:0;width:100%;margin:1.4rem 0;border:1px solid color-mix(in srgb,var(--border) 88%,var(--fg) 12%);border-radius:18px;box-shadow:0 16px 46px color-mix(in srgb,var(--shadow) 55%,transparent);background:color-mix(in srgb,var(--card) 88%,transparent)}
+.post th,.post td,.prose th,.prose td,.book-body th,.book-body td{border:1px solid color-mix(in srgb,var(--border) 88%,var(--fg) 12%);padding:.72rem .86rem;vertical-align:top;text-align:left}
+.post th,.prose th,.book-body th{background:linear-gradient(180deg,color-mix(in srgb,var(--atom) 16%,var(--card)),color-mix(in srgb,var(--gold) 8%,var(--nav)));color:var(--fg);font-weight:900}
+.post tr:nth-child(even) td,.prose tr:nth-child(even) td,.book-body tr:nth-child(even) td{background:color-mix(in srgb,var(--nav) 50%,transparent)}
