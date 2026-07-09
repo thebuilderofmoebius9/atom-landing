@@ -19,3 +19,8 @@
 .post th,.post td,.prose th,.prose td,.book-body th,.book-body td{border:1px solid color-mix(in srgb,var(--border) 88%,var(--fg) 12%);padding:.72rem .86rem;vertical-align:top;text-align:left}
 .post th,.prose th,.book-body th{background:linear-gradient(180deg,color-mix(in srgb,var(--atom) 16%,var(--card)),color-mix(in srgb,var(--gold) 8%,var(--nav)));color:var(--fg);font-weight:900}
 .post tr:nth-child(even) td,.prose tr:nth-child(even) td,.book-body tr:nth-child(even) td{background:color-mix(in srgb,var(--nav) 50%,transparent)}
+
+/* Keep adjacent rendered code panels visually separate in Discord/blog screenshots. */
+.post pre + pre,.prose pre + pre,.book-body pre + pre{margin-top:1.35rem}
+.post pre + p,.prose pre + p,.book-body pre + p{margin-top:1.25rem}
+.post p + pre,.prose p + pre,.book-body p + pre{margin-top:1.15rem}
