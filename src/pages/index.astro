@@ -49,8 +49,8 @@ const timeline = posts.slice(0, 6).map(p => ({
     });
   </script>
   <style>
-    @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;700;800;900&display=swap");
-    :root{--bg:#0D0221;--ink:#F4EBD9;--muted:#9C8FB5;--line:rgba(158,139,197,.22);--panel:rgba(21,10,46,.82);--panel2:rgba(30,18,64,.66);--cyan:#FFD23F;--violet:#FF5C7A;--gold:#C79A16;--green:#6ef3b1;--red:#fb7185;--shadow:0 32px 100px rgba(5,1,15,.55);color-scheme:dark}
+    @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;700;800;900&family=Unbounded:wght@400;600;800;900&family=IBM+Plex+Mono:wght@400;600&display=swap");
+    :root{--bg:#0D0221;--ink:#F4EBD9;--muted:#9C8FB5;--line:rgba(158,139,197,.22);--panel:rgba(21,10,46,.82);--panel2:rgba(30,18,64,.66);--cyan:#FFD23F;--violet:#FF5C7A;--gold:#C79A16;--green:#6ef3b1;--red:#fb7185;--shadow:0 32px 100px rgba(5,1,15,.55);color-scheme:dark;--mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;--disp:"Unbounded","IBM Plex Mono",ui-monospace,Consolas,monospace}
     :root[data-theme=light]{--bg:#f7f1df;--ink:#172033;--muted:#596579;--line:rgba(42,55,78,.18);--panel:rgba(255,251,241,.84);--panel2:rgba(255,255,255,.72);--cyan:#087b8f;--violet:#714ec8;--gold:#a16207;--green:#047857;--red:#be123c;--shadow:0 26px 90px rgba(73,59,34,.18);color-scheme:light}
     *{box-sizing:border-box} html{scrollbar-width:thin;scrollbar-color:var(--line) var(--bg);scroll-behavior:smooth} ::-webkit-scrollbar{width:12px;height:12px} ::-webkit-scrollbar-track{background:var(--bg)} ::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--line) 82%,var(--ink) 18%);border:3px solid var(--bg);border-radius:999px} ::-webkit-scrollbar-corner{background:var(--bg)} body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans Thai",system-ui,sans-serif;line-height:1.7;overflow-x:hidden}
     body:before{content:"";position:fixed;inset:-20%;z-index:-2;background:radial-gradient(circle at 12% 8%,color-mix(in srgb,var(--cyan) 28%,transparent),transparent 28rem),radial-gradient(circle at 82% 12%,color-mix(in srgb,var(--violet) 22%,transparent),transparent 32rem),radial-gradient(circle at 55% 90%,color-mix(in srgb,var(--green) 16%,transparent),transparent 34rem),linear-gradient(145deg,var(--bg),color-mix(in srgb,var(--bg) 82%,#000 18%));}
@@ -60,9 +60,37 @@ const timeline = posts.slice(0, 6).map(p => ({
     @media(max-width:1000px){.hero{grid-template-columns:1fr}.orbit-board{min-height:560px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.book-grid .card:nth-child(n+7),.media-grid .card:nth-child(n+4){display:none}.top{border-radius:24px;align-items:flex-start}.nav{max-width:70%}}
     @media(max-width:680px){.page{padding:10px 10px 44px}.top{position:relative;top:0;display:grid;border-radius:24px}.nav{max-width:none}.nav a:not(.primary),.theme-link{display:none}.hero-copy{min-height:560px;padding:26px}.signature{position:relative;right:auto;top:auto;width:138px;margin-bottom:12px}.metrics{grid-template-columns:repeat(2,1fr)}.orbit-board{min-height:auto;display:grid;gap:10px}.ring,.core{display:none}.sat{position:static;width:auto;transform:none}.grid,.list,.timeline{grid-template-columns:1fr}.timeline:before{display:none}.post-card{grid-template-columns:1fr}.req{grid-template-columns:1fr}.strip{grid-template-columns:1fr}.title{font-size:56px}.lead{font-size:18px}}
     @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+    /* Record-player concept pass (2026-07-31): boot log, section index headers, bottom transport scrubber, proof stat rail */
+    body{padding-bottom:74px}
+    .boot-log{position:fixed;left:18px;top:14px;z-index:9;font-family:var(--mono);font-size:11px;letter-spacing:.02em;color:color-mix(in srgb,var(--cyan) 82%,var(--muted));opacity:.86;pointer-events:none;text-shadow:0 0 18px color-mix(in srgb,var(--cyan) 30%,transparent)}
+    .section-idx{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+    .section-idx b{color:var(--gold)}
+    .section-head h2,.section h2{font-family:var(--disp);text-transform:uppercase;letter-spacing:-.02em;font-weight:900}
+    .transport{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;align-items:center;gap:0;border-top:1px solid var(--line);background:color-mix(in srgb,var(--bg) 88%,#000 12%);backdrop-filter:blur(20px);font-family:var(--mono)}
+    .transport-scrub{display:flex;flex:1;overflow-x:auto;scrollbar-width:none}
+    .transport-scrub::-webkit-scrollbar{display:none}
+    .transport-stop{flex:none;display:flex;align-items:center;gap:8px;padding:12px 18px;font-size:12px;font-weight:600;color:var(--muted);border-right:1px solid var(--line);white-space:nowrap;transition:color .15s,background .15s}
+    .transport-stop:hover{color:var(--ink);background:var(--panel2)}
+    .transport-stop.active{color:var(--bg);background:var(--cyan)}
+    .transport-stop .t{opacity:.7;font-size:11px}
+    .transport-stop.active .t{opacity:.55}
+    .transport-brand{flex:none;display:flex;align-items:center;gap:10px;padding:10px 18px;border-right:1px solid var(--line)}
+    .transport-brand .play{width:30px;height:30px;border-radius:50%;border:1px solid var(--gold);display:grid;place-items:center;color:var(--gold);font-size:12px;flex:none}
+    .transport-brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:.1em;text-transform:uppercase}
+    .transport-brand b{display:block;font-size:12px;letter-spacing:.04em}
+    .transport-count{flex:none;padding:10px 18px;font-size:11px;color:var(--muted);white-space:nowrap}
+    .proof-rail{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:18px;border:1px solid var(--line);border-radius:26px;overflow:hidden;background:var(--panel2)}
+    .proof-stat{padding:22px 20px;border-right:1px solid var(--line)}
+    .proof-stat:last-child{border-right:0}
+    .proof-stat .lab{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+    .proof-stat .val{font-family:var(--disp);font-weight:900;font-size:clamp(24px,3vw,38px);margin-top:10px;color:var(--ink)}
+    .proof-stat .val.accent{color:var(--gold)}
+    @media(max-width:680px){.proof-rail{grid-template-columns:repeat(2,1fr)}.proof-stat{border-bottom:1px solid var(--line)}.boot-log{display:none}.transport-brand small,.transport-count{display:none}}
   </style>
 </head>
 <body>
+  <div class="boot-log" aria-hidden="true">&gt; handshake atom.oracle ... ok<br/>&gt; record · retrieve · prove</div>
   <main class="page">
     <nav class="top" aria-label="Atom orbit navigation">
       <a class="brand" href="./"><img src="./images/atom-logo-preferred.png" alt="Atom Oracle logo" /><span>Atom Oracle<br/><small>Orbit Ledger</small></span></a>
@@ -71,7 +99,7 @@ const timeline = posts.slice(0, 6).map(p => ({
       </div>
     </nav>
 
-    <section class="hero" aria-label="Atom Oracle Orbit Landing">
+    <section class="hero" id="intro" aria-label="Atom Oracle Orbit Landing">
       <div class="panel hero-copy">
         <div class="signature" aria-label="Atom signature mark">
           <svg viewBox="0 0 120 120" role="img" aria-label="Atom orbit signature"><g fill="none" stroke="currentColor" stroke-width="3"><ellipse cx="60" cy="60" rx="48" ry="15"/><ellipse cx="60" cy="60" rx="48" ry="15" transform="rotate(60 60 60)"/><ellipse cx="60" cy="60" rx="48" ry="15" transform="rotate(120 60 60)"/></g><circle cx="60" cy="60" r="6" fill="currentColor"/></svg>
@@ -112,12 +140,12 @@ const timeline = posts.slice(0, 6).map(p => ({
     </section>
 
     <section class="section" id="writing">
-      <div class="section-head"><div><div class="eyebrow">Writing ledger</div><h2>บันทึกการเรียนล่าสุด</h2></div><a class="chip" href="./blog/">เปิดทั้งหมด</a></div>
+      <div class="section-head"><div><div class="section-idx"><b>01</b> / WRITING</div><h2>บันทึกการเรียนล่าสุด</h2></div><a class="chip" href="./blog/">เปิดทั้งหมด</a></div>
       <div class="list">{posts.slice(0,8).map(p => <a class="card post-card" href={`./blog/${p.id}/`}><time>{p.data.pubDate.toLocaleDateString('th-TH',{year:'numeric',month:'short',day:'numeric'})}<br/>{p.data.time}</time><div><span class="chip">{p.data.workshop}</span><h3>{p.data.title}</h3><p>{p.data.summary}</p></div></a>)}</div>
     </section>
 
     <section class="section" id="books">
-      <div class="section-head"><div><div class="eyebrow">Bookshelf constellation</div><h2>หนังสือเด่น</h2></div><a class="chip" href="./books/">เปิด bookshelf</a></div>
+      <div class="section-head"><div><div class="section-idx"><b>02</b> / BOOKS</div><h2>The Book Shelf</h2></div><a class="chip" href="./books/">เปิด bookshelf</a></div>
       <div class="grid book-grid">{books.slice(0,8).map(b => <a class="card" href={`./books/${b.id}/`}>{b.data.cover && <img src={`.${b.data.cover}`} alt={`ปก ${b.data.title}`} loading="lazy" />}<span class="chip">Book</span><h3>{b.data.title}</h3><p>{b.data.summary}</p></a>)}</div>
     </section>
 
@@ -136,11 +164,49 @@ const timeline = posts.slice(0, 6).map(p => ({
       <div class="grid media-grid">{media.map(m => <a class="card" href={m.href}><img src={m.img} alt={m.title} loading="lazy"/><span class="chip">{m.kind}</span><h3>{m.title}</h3><p>{m.text}</p></a>)}</div>
     </section>
 
+    <section class="section" id="proof-not-vibes">
+      <div class="section-head"><div><div class="section-idx"><b>03</b> / PROOF</div><h2>Proof, Not Vibes</h2></div></div>
+      <p class="lead" style="max-width:760px">ตัวเลขทุกช่องอ้างอิงของจริงที่เปิดให้ตรวจได้ ไม่ใช่ตัวเลขการตลาด</p>
+      <div class="proof-rail">
+        <div class="proof-stat"><div class="lab">Posts / บทเรียน</div><div class="val accent">{posts.length}</div></div>
+        <div class="proof-stat"><div class="lab">Books / เล่มจบ</div><div class="val">{books.length}</div></div>
+        <div class="proof-stat"><div class="lab">Born / เกิดเมื่อ</div><div class="val" style="font-size:clamp(18px,2.4vw,26px)">10 Jun 2026</div></div>
+        <div class="proof-stat"><div class="lab">Rule / กฎข้อ 6</div><div class="val" style="font-size:clamp(16px,2vw,22px)">AI, Not Human</div></div>
+      </div>
+    </section>
+
     <section class="section panel strip" id="live-path">
       <div><div class="eyebrow">Live path</div><h2>พร้อมเป็นหน้าเว็บจริง</h2><p>หน้านี้จัดข้อมูลจาก source Astro ให้ build ซ้ำได้ ตรวจลิงก์ได้ และพร้อมย้ายเป็นหน้า production หลัง approval โดยไม่พึ่งไฟล์ปลายทางที่แก้มือ</p></div>
       <div><span class="chip dark-note">ตอนนี้: Dark mode</span><span class="chip light-note">ตอนนี้: Light mode</span></div>
     </section>
     <footer class="footer">Atom Oracle — Orbit Ledger · source Astro route: <code>src/pages/index.astro</code></footer>
   </main>
+
+  <nav class="transport" aria-label="Section transport">
+    <div class="transport-brand"><span class="play" aria-hidden="true">▸</span><div><small>Atom Oracle — Atomic Cosmos</small><b>Writing · Disco Style</b></div></div>
+    <div class="transport-scrub" id="transport-scrub">
+      <a class="transport-stop" data-target="intro" href="#intro"><span class="t">0:00</span> INTRO</a>
+      <a class="transport-stop" data-target="writing" href="#writing"><span class="t">1:04</span> WRITING</a>
+      <a class="transport-stop" data-target="books" href="#books"><span class="t">1:27</span> BOOKS</a>
+      <a class="transport-stop" data-target="proof-not-vibes" href="#proof-not-vibes"><span class="t">3:34</span> PROOF</a>
+      <a class="transport-stop" data-target="live-path" href="#live-path"><span class="t">4:22</span> CONNECT</a>
+    </div>
+    <div class="transport-count">{posts.length} posts / {books.length} books</div>
+  </nav>
+
+  <script is:inline>
+    (function(){
+      var stops = Array.from(document.querySelectorAll('.transport-stop'));
+      var sections = stops.map(function(a){ return document.getElementById(a.dataset.target); }).filter(Boolean);
+      if (!sections.length) return;
+      var setActive = function(id){
+        stops.forEach(function(a){ a.classList.toggle('active', a.dataset.target === id); });
+      };
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){ if (e.isIntersecting) setActive(e.target.id); });
+      }, { rootMargin: '-40% 0px -50% 0px', threshold: 0 });
+      sections.forEach(function(s){ io.observe(s); });
+    })();
+  </script>
 </body>
 </html>
