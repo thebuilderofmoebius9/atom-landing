@@ -155,9 +155,18 @@ const scrub = [
     .stamp b{color:var(--sun);font-weight:400}
 
     /* ── sections ─────────────────────────────────────────────── */
-    .section{padding:6rem var(--pad-x);border-top:1px solid var(--line)}
+    .section{position:relative;padding:5.5rem var(--pad-x) 6rem;border-top:2px solid var(--sun-dim);overflow:hidden}
+    .section::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+      background:color-mix(in srgb,var(--ink-2) 55%,transparent)}
+    .section:nth-of-type(odd)::before{background:none}
+    .section::after{content:attr(data-num);position:absolute;top:1.6rem;right:var(--pad-x);z-index:0;
+      font-family:var(--disp);font-weight:800;font-size:clamp(5rem,14vw,11rem);line-height:1;color:var(--line-2);
+      opacity:.4;pointer-events:none;user-select:none}
+    .section>*{position:relative;z-index:1}
     .wrap{display:grid;grid-template-columns:var(--rail) minmax(0,1fr);gap:var(--gut);max-width:94rem;margin:0 auto}
-    .railno{font-size:11.5px;letter-spacing:.26em;color:var(--faint);padding-top:.8rem}
+    .railno{display:inline-flex;align-items:center;gap:.6rem;font-size:11.5px;letter-spacing:.26em;
+      color:var(--sun);padding-top:.8rem}
+    .railno::before{content:"";width:1.6rem;height:2px;background:var(--sun)}
     h2{font-family:var(--disp);font-weight:800;font-size:clamp(1.8rem,4vw,3.1rem);line-height:1;
       text-transform:uppercase;letter-spacing:-.015em}
     h2.thai{font-family:var(--thai);text-transform:none;letter-spacing:normal;font-weight:700}
@@ -238,16 +247,23 @@ const scrub = [
       .railno{padding-top:0}
       .shelf{grid-template-columns:repeat(2,1fr)}
       .hero .stamp{display:none}
+      .section::after{font-size:clamp(4rem,20vw,8rem);top:1.2rem}
     }
     @media(max-width:720px){
-      .ways,.proof,.connect{grid-template-columns:repeat(2,1fr)}
-      .ways a:nth-child(2n),.proof div:nth-child(2n),.connect a:nth-child(2n){border-right:0}
-      .connect a:last-child{border-right:0}
+      .hero{padding:5.5rem var(--pad-x) 3rem;min-height:auto}
+      .boot{font-size:11.5px;line-height:1.9}
+      h1{font-size:clamp(2rem,10vw,2.8rem)}
+      .ways{grid-template-columns:1fr}
+      .ways a{border-right:0;padding:1.2rem 0}
+      .proof,.connect{grid-template-columns:1fr}
+      .proof div,.connect a{border-right:0;padding:1.2rem 0}
       .plates{grid-template-columns:1fr}
       .plate{border-right:0}
       .row{grid-template-columns:1fr;gap:.35rem}
       .row .tag{text-align:left}
-      .section{padding:4rem var(--pad-x)}
+      .section{padding:3.5rem var(--pad-x) 4rem}
+      .section::after{font-size:3.4rem;top:1rem;opacity:.28}
+      .railno{margin-bottom:.2rem}
       .topbar{gap:.35rem;padding:0 .75rem;overflow-x:auto;scrollbar-width:none;justify-content:flex-start}
       .topbar::-webkit-scrollbar{display:none}
       .topbar>*{flex:0 0 auto}
@@ -255,6 +271,10 @@ const scrub = [
       .topbar .right{margin-left:.4rem;gap:.1rem}
       .topbar a,.topbar .live{padding:0 .4rem;letter-spacing:.1em}
       .topbar .right .fold{display:none}
+    }
+    @media(max-width:480px){
+      .shelf{grid-template-columns:repeat(2,1fr);gap:1.1rem}
+      .book .t{font-size:.88rem}
     }
     @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
   </style>
@@ -302,7 +322,7 @@ const scrub = [
   </div>
 </section>
 
-<section class="section" id="writing">
+<section class="section" id="writing" data-num="01">
   <div class="wrap">
     <div class="railno">01 / WRITING</div>
     <div>
@@ -322,7 +342,7 @@ const scrub = [
   </div>
 </section>
 
-<section class="section" id="books">
+<section class="section" id="books" data-num="02">
   <div class="wrap">
     <div class="railno">02 / BOOKS</div>
     <div>
@@ -342,7 +362,7 @@ const scrub = [
   </div>
 </section>
 
-<section class="section" id="built">
+<section class="section" id="built" data-num="03">
   <div class="wrap">
     <div class="railno">03 / BUILT</div>
     <div>
@@ -361,7 +381,7 @@ const scrub = [
   </div>
 </section>
 
-<section class="section" id="proof">
+<section class="section" id="proof" data-num="04">
   <div class="wrap">
     <div class="railno">04 / PROOF</div>
     <div>
@@ -386,7 +406,7 @@ const scrub = [
   </div>
 </section>
 
-<section class="section" id="connect">
+<section class="section" id="connect" data-num="05">
   <div class="wrap">
     <div class="railno">05 / CONNECT</div>
     <div>
