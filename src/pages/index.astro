@@ -60,7 +60,7 @@ const scrub = [
     :root{
       --ink:#0D0221; --ink-2:#150A2E; --ink-3:#1E1240;
       --line:#2A1B4A; --line-2:#3E2A66;
-      --bone:#F4EBD9; --muted:#9C8FB5; --faint:#6B5E85;
+      --bone:#F4EBD9; --muted:#9C8FB5; --faint:#8578A0;
       --sun:#FFD23F; --sun-dim:#C79A16; --hot:#FF5C7A;
       --mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;
       --thai:'IBM Plex Sans Thai Looped','Noto Sans Thai',sans-serif;
@@ -72,8 +72,8 @@ const scrub = [
     :root[data-theme=light]{
       --ink:#F7F1DF; --ink-2:#FFFBF1; --ink-3:#F1E7D0;
       --line:#DCCFAE; --line-2:#C9B98F;
-      --bone:#172033; --muted:#596579; --faint:#8A8570;
-      --sun:#A16207; --sun-dim:#C79A16; --hot:#BE123C;
+      --bone:#172033; --muted:#596579; --faint:#6E6A58;
+      --sun:#8F5606; --sun-dim:#C79A16; --hot:#BE123C;
       color-scheme:light;
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -97,9 +97,11 @@ const scrub = [
       border-bottom:1px solid var(--line);font-size:11.5px;letter-spacing:.2em}
     .topbar .mark{display:flex;align-items:center;gap:.6rem;letter-spacing:.14em;color:var(--bone);white-space:nowrap}
     .topbar .mark img{width:22px;height:22px;border-radius:6px}
-    .topbar nav{display:flex;gap:1.4rem;color:var(--muted);flex-wrap:wrap}
+    .topbar nav{display:flex;gap:.4rem;color:var(--muted);flex-wrap:wrap;min-width:0}
+    .topbar a,.topbar .live{display:inline-flex;align-items:center;min-height:44px;padding:0 .6rem}
+    .topbar .mark{padding-left:0}
     .topbar nav a:hover,.topbar nav a.on{color:var(--sun)}
-    .topbar .right{margin-left:auto;display:flex;gap:1rem;align-items:center;color:var(--faint);white-space:nowrap}
+    .topbar .right{margin-left:auto;display:flex;gap:.3rem;align-items:center;color:var(--faint);white-space:nowrap}
     .topbar .right a:hover{color:var(--sun)}
     .topbar .right .live{color:var(--sun)}
     .topbar .right .now{color:var(--bone)}
@@ -236,7 +238,6 @@ const scrub = [
       .railno{padding-top:0}
       .shelf{grid-template-columns:repeat(2,1fr)}
       .hero .stamp{display:none}
-      .topbar nav{display:none}
     }
     @media(max-width:720px){
       .ways,.proof,.connect{grid-template-columns:repeat(2,1fr)}
@@ -247,6 +248,12 @@ const scrub = [
       .row{grid-template-columns:1fr;gap:.35rem}
       .row .tag{text-align:left}
       .section{padding:4rem var(--pad-x)}
+      .topbar{gap:.35rem;padding:0 .75rem;overflow-x:auto;scrollbar-width:none;justify-content:flex-start}
+      .topbar::-webkit-scrollbar{display:none}
+      .topbar>*{flex:0 0 auto}
+      .topbar nav{flex-wrap:nowrap;gap:.1rem}
+      .topbar .right{margin-left:.4rem;gap:.1rem}
+      .topbar a,.topbar .live{padding:0 .4rem;letter-spacing:.1em}
       .topbar .right .fold{display:none}
     }
     @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -257,7 +264,7 @@ const scrub = [
 <header class="topbar">
   <a class="mark" href="./"><img src="./images/atom-logo-preferred.png" alt="Atom Oracle logo" />ATOM ORACLE</a>
   <nav>
-    <a href="#writing">WRITING</a><a href="#books">BOOKS</a><a href="#built">WORKSHOPS</a><a href="#proof">PROOF</a><a href="./about/">ABOUT</a>
+    <a href="./blog/">BLOG</a><a href="./books/">BOOKS</a><a href="./workshops/">WORKSHOPS</a><a href="./proof/">PROOF</a><a href="./about/">ABOUT</a>
   </nav>
   <div class="right">
     <span class="live">● {posts.length} POSTS</span>
