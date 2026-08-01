@@ -16,4 +16,4 @@ Allow: /
 User-agent: CCBot
 Allow: /
 
-Sitemap: https://atom.buildwithoracle.com/sitemap-index.xml
+Sitemap: https://thebuilderofmoebius9.github.io/atom-landing/sitemap-index.xml
